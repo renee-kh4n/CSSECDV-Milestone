@@ -58,7 +58,7 @@ app.post('/register',  upload.single('pfp'), async (req, res) =>{
             VALUES ($1, $2, $3, $4, $5)`;
 
         await pool.query(query, [
-            firstName, lastName, email, phoneNumber, password
+            firstName, lastName, email, phoneNumber, passwordHash
         ]);
 
         console.log("uploaded contents to db");
