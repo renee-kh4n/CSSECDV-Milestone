@@ -2,6 +2,8 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const pool = require('./db');
 const exphbs = require('express-handlebars');
+const multer = require('multer');
+const upload = multer();
 
 const app = express();
 
@@ -33,11 +35,12 @@ app.get('/admin', (req, res) => {
     res.render('admin', { title: 'Admin Panel'} )
 })
 
-app.post('/register', async (req, res) =>{ 
+app.post('/register',  upload.single('pfp'), async (req, res) =>{ 
     console.log('app register');
     console.log('Content-Type:', req.headers['content-type']);
     console.log('Body:', req.body);
-    res.send('ok');
+    // res.send('ok');
+    console.log(req.file); // uploaded file
 
     try{ 
         // store image in supabase bucket
@@ -58,10 +61,11 @@ app.post('/register', async (req, res) =>{
             firstName, lastName, email, phoneNumber, password
         ]);
 
-        res.redirect('/login');
+        console.log("uploaded contents to db");
+        return res.redirect('/login');
     }catch(err){
         console.error(err);
-        res.status(500).send('Server Error');
+        return res.status(500).send('Server Error');
     }
 })
 
