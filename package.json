@@ -4,7 +4,8 @@
   "description": "Requirements:\r 1. Registration Screen\r     a. Fullname\r     b. Email\r     c. Phone Number\r     d. Profile photo\r 2. Login Screen\r 3. Administration panel\r 4. Security Features discussed in class\r     a. Anti brute-force protection\r     b. password hashing with salting\r     c. input validation\r     d. file upload type detection\r 5. Must be SQL based",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
