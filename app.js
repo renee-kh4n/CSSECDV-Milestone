@@ -31,6 +31,16 @@ app.get('/admin', (req, res) => {
     res.render('admin', { title: 'Admin Panel'} )
 })
 
+app.post('/register', (req, res) =>{
+    console.log(req.body);
+    res.redirect('/login');
+})
+
+app.post('/login', (req, res) =>{
+    console.log(req.body);
+    res.redirect('/admin'); //change, for testing purposes only
+})
+
 // Start server
 const PORT = 3000;
 app.listen(PORT, () => {
