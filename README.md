@@ -18,3 +18,4 @@ Requirements:
 Install dependencies:  
 npm init -y  
 npm i express express-handlebars body-parser  
+npm pg bcrypt

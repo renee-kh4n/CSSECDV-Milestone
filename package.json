@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
-    "express-handlebars": "^8.0.4"
+    "express-handlebars": "^8.0.4",
+    "pg": "^8.16.3"
   }
 }
