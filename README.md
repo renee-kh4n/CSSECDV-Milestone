@@ -14,3 +14,7 @@ Requirements:
     c. input validation
     d. file upload type detection
 5. Must be SQL based
+
+Install dependencies:  
+npm init -y  
+npm i express express-handlebars body-parser  
