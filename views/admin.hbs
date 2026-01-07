@@ -1,0 +1,28 @@
+<h2>Admin Panel</h2>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>Photo</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each users}}
+        <tr>
+            <td>{{this.firstname}}</td>
+            <td>{{this.lastname}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.phonenumber}}</td>
+            <td>
+                <img src="{{this.photo}}" class="pfp-admin-view">
+            </td>
+            <td class="danger-btn">Delete User</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
