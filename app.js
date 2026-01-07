@@ -1,4 +1,6 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const pool = require('./db');
 const exphbs = require('express-handlebars');
 
 const app = express();
@@ -31,9 +33,36 @@ app.get('/admin', (req, res) => {
     res.render('admin', { title: 'Admin Panel'} )
 })
 
-app.post('/register', (req, res) =>{
-    console.log(req.body);
-    res.redirect('/login');
+app.post('/register', async (req, res) =>{ 
+    console.log('app register');
+    console.log('Content-Type:', req.headers['content-type']);
+    console.log('Body:', req.body);
+    res.send('ok');
+
+    try{ 
+        // store image in supabase bucket
+        const { firstName, lastName, email, phoneNumber, password} = req.body;
+
+        if(!firstName || !lastName || !email || !phoneNumber || !password){
+            return res.status(400).send('Missing required fields');
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const query = `
+        INSERT INTO users
+            (first_name, last_name, email, phone_number, password)
+            VALUES ($1, $2, $3, $4, $5)`;
+
+        await pool.query(query, [
+            firstName, lastName, email, phoneNumber, password
+        ]);
+
+        res.redirect('/login');
+    }catch(err){
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 })
 
 app.post('/login', (req, res) =>{

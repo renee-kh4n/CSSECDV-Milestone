@@ -5,16 +5,35 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
         console.log('in func js: login')
-        alert('Login submitted (frontend only)');
+       // alert('Login submitted (frontend only)');
     });
   }
 
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
-    registerForm.addEventListener('submit', e => {
+    registerForm.addEventListener('submit', async e => {
         e.preventDefault();
-        console.log('in func js: register')
-        alert('Registration submitted (frontend only)');
+
+        const formData = {
+            firstName: registerForm.firstName.value,
+            lastName: registerForm.lastName.value,
+            email: registerForm.email.value,
+            phoneNumber: registerForm.phoneNumber.value,
+            pfp: registerForm.pfp.value, // store in supabase bucket
+            password: registerForm.password.value
+        }; 
+
+        const res = await fetch('/register', {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        console.log('in func js: register');
+        console.log(formData);
+       // alert('Registration submitted (frontend only)');
     });
   }
 
