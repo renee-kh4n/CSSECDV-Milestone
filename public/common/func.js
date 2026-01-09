@@ -2,10 +2,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
-    loginForm.addEventListener('submit', e => {
-        e.preventDefault();
-        console.log('in func js: login')
-       // alert('Login submitted (frontend only)');
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const formData = {
+        email: loginForm.email.value,
+        password: loginForm.password.value
+      }
+
+      const res = await fetch('/login', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      console.log(formData);
+      console.log('in func js: login')
+      // alert('Login submitted (frontend only)');
     });
   }
 

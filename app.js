@@ -69,9 +69,50 @@ app.post('/register',  upload.single('pfp'), async (req, res) =>{
     }
 })
 
-app.post('/login', (req, res) =>{
+// app.post('/login', (req, res) =>{
+//     console.log(req.body);
+//     res.redirect('/admin'); //change, for testing purposes only
+// })
+
+app.post('/login', async (req, res) => {
     console.log(req.body);
-    res.redirect('/admin'); //change, for testing purposes only
+  try{
+    
+    const { email, password} = req.body;
+
+      if(!email || !password){
+        return res.status(400).send('Missing required fields');
+    }
+
+    const query = `SELECT user_ID, role, password FROM users WHERE email=$1`;
+
+    const rows = await pool.query(query, [email]);
+
+    if(rows.rowCount < 1){
+      console.log("no email");
+      return res.status(401).send('Invalid Credentials');
+    } 
+
+    const user = rows.rows[0];
+
+    const match = await bcrypt.compare(password, user.password);
+    if(match){
+      console.log("correct password");
+      if(user.role === 'admin')
+        return res.redirect('/admin'); //change, for testing purposes only
+      else
+        return res.redirect('/admin'); //change, for testing purposes only
+    } else{
+      console.log("wrong password");
+      return res.status(401).send('Invalid Credentials');
+    }
+
+
+  } catch(err){
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+
 })
 
 // Start server
