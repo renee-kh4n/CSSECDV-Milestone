@@ -62,7 +62,10 @@ app.post('/register',  upload.single('pfp'), async (req, res) =>{
         ]);
 
         console.log("uploaded contents to db");
-        return res.redirect('/login');
+        return res.json({
+          success: true
+        });
+        
     }catch(err){
         console.error(err);
         return res.status(500).send('Server Error');
@@ -98,10 +101,10 @@ app.post('/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if(match){
       console.log("correct password");
-      if(user.role === 'admin')
-        return res.redirect('/admin'); //change, for testing purposes only
-      else
-        return res.redirect('/admin'); //change, for testing purposes only
+      return res.json({
+        success: true,
+        role: user.role
+      })
     } else{
       console.log("wrong password");
       return res.status(401).send('Invalid Credentials');
