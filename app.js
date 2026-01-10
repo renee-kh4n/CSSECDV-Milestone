@@ -31,9 +31,30 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.get('/admin', (req, res) => {
-    res.render('admin', { title: 'Admin Panel'} )
-})
+app.get('/admin', async (req, res) => {
+
+  try{
+    const query = `SELECT * FROM users`;
+
+    const result = await pool.query(query);
+
+    const users = result.rows.map(u => ({
+      firstName: u.first_name,
+      lastName: u.last_name,
+      email: u.email,
+      phoneNumber: u.phone_number,
+      photo: u.photo || '',
+      role: u.role
+    }));
+
+    res.render('admin', { title: 'Admin Panel', users} )
+
+  } catch (err){
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+  
+});
 
 app.post('/register',  upload.single('pfp'), async (req, res) =>{ 
     console.log('app register');

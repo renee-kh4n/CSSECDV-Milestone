@@ -8,19 +8,21 @@
             <th>Email</th>
             <th>Phone number</th>
             <th>Photo</th>
+            <th>Role</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {{#each users}}
         <tr>
-            <td>{{this.firstname}}</td>
-            <td>{{this.lastname}}</td>
+            <td>{{this.firstName}}</td>
+            <td>{{this.lastName}}</td>
             <td>{{this.email}}</td>
-            <td>{{this.phonenumber}}</td>
+            <td>{{this.phoneNumber}}</td>
             <td>
                 <img src="{{this.photo}}" class="pfp-admin-view">
             </td>
+            <td>{{this.role}}</td>
             <td class="danger-btn">Delete User</td>
         </tr>
         {{/each}}
