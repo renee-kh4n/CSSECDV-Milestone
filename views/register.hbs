@@ -1,42 +1,45 @@
-<h2>Register</h2>
+<div class="container">
+    <h2>Register</h2>
 
-<form id="register-form" >
-    <div class="form-input">
-        <label>First Name: </label>
-        <input type="text" name="firstName" required>
-    </div>
+    <form id="register-form" >
+        <div class="form-input">
+            <label>First Name: </label>
+            <input type="text" name="firstName" required>
+        </div>
 
-    <div class="form-input">
-        <label>Last Name: </label>
-        <input type="text" name="lastName" required>
-    </div>
+        <div class="form-input">
+            <label>Last Name: </label>
+            <input type="text" name="lastName" required>
+        </div>
 
-    <div class="form-input">
-        <label>Email: </label>
-        <input type="email" name="email" required>
-    </div>
+        <div class="form-input">
+            <label>Email: </label>
+            <input type="email" name="email" required>
+        </div>
 
-    <div class="form-input" method="POST">
-        <label>Phone Number: </label>
-        <input type="number" name="phoneNumber" required>
-    </div>
+        <div class="form-input" method="POST">
+            <label>Phone Number: </label>
+            <input type="number" name="phoneNumber" required>
+        </div>
 
-    <div class="form-input">
-        <label>Profile Photo: </label>
-        <input type="file" name="pfp" id="pfp" accept="image/jpeg, image/png" required>
-    </div>
+        <div class="form-input">
+            <label>Profile Photo: </label>
+            <input type="file" name="pfp" id="pfp" accept="image/jpeg, image/png" required>
+        </div>
 
-    <div class="form-input">
-        <label>Password: </label>
-        <input type="password" name="password" 
-        minlength="8" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}" 
-        title="Password must be at least 8 characters and include a letter, a number, and a special character." required>
-        
-    </div>
+        <div class="form-input">
+            <label>Password: </label>
+            <input type="password" name="password" 
+            minlength="8" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}" 
+            title="Password must be at least 8 characters and include a letter, a number, and a special character." required>
+            
+        </div>
 
-    <button class="submit-btn" type="submit">Register</button>
-</form>
+        <button class="submit-btn" type="submit">Register</button>
+    </form>
 
-<p class="form-switch">
-    Already a member? <a href="/login">Log in to your account</a>
-</p>
+    <p class="form-switch">
+        Already a member? <a href="/login">Log in to your account</a>
+    </p>
+
+</div>
