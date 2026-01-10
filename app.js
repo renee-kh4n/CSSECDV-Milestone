@@ -93,7 +93,10 @@ app.post('/login', async (req, res) => {
 
     if(rows.rowCount < 1){
       console.log("no email");
-      return res.status(401).send('Invalid Credentials');
+      // return res.status(401).send('Invalid Credentials');
+       return res.json({
+        success: false
+      })
     } 
 
     const user = rows.rows[0];
@@ -107,7 +110,10 @@ app.post('/login', async (req, res) => {
       })
     } else{
       console.log("wrong password");
-      return res.status(401).send('Invalid Credentials');
+      // return res.status(401).send('Invalid Credentials');
+       return res.json({
+        success: false
+      })
     }
 
 

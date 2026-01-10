@@ -20,15 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       console.log(formData);
       console.log('in func js: login')
-      // alert('Login submitted (frontend only)');
 
       const data = await res.json();
 
-      if(data.success){
+      //console.log(data.success);
+
+      if(data.success){ 
         if(data.role === 'admin')
           window.location.href = '/admin';
         else 
           window.location.href = '/admin';
+      }else{ 
+        //console.log("login error message");
+        document.getElementById('error-message').textContent= "Invalid Credentials";
       }
 
 

@@ -22,6 +22,10 @@ body {
   border-radius: 6px;
 }
 
+.error-message{
+  color: red;
+}
+
 .form-input {
   margin-bottom: 15px;
 }
