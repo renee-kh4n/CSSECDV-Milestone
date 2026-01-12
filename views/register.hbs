@@ -17,9 +17,38 @@
             <input type="email" name="email" required>
         </div>
 
-        <div class="form-input" method="POST">
-            <label>Phone Number: </label>
-            <input type="number" name="phoneNumber" required>
+        <div class="form-input">
+            <label>Phone Number</label>
+
+            <div class="phone-number">
+            <select id="countryCode" name="countryCode" required> 
+                {{!-- can be placed in a JSON file --}}
+                <option value="+971">🇦🇪 +971</option> <!-- United Arab Emirates -->
+                <option value="+61">🇦🇺 +61</option>  <!-- Australia -->
+                <option value="+86">🇨🇳 +86</option>  <!-- China -->
+                <option value="+33">🇫🇷 +33</option>  <!-- France -->
+                <option value="+49">🇩🇪 +49</option>  <!-- Germany -->
+                <option value="+91">🇮🇳 +91</option>  <!-- India -->
+                <option value="+39">🇮🇹 +39</option>  <!-- Italy -->
+                <option value="+81">🇯🇵 +81</option>  <!-- Japan -->
+                <option value="+82">🇰🇷 +82</option>  <!-- South Korea -->
+                <option value="+31">🇳🇱 +31</option>  <!-- Netherlands -->
+                <option value="+63">🇵🇭 +63</option>  <!-- Philippines -->
+                <option value="+7">🇷🇺 +7</option>   <!-- Russia -->
+                <option value="+34">🇪🇸 +34</option>  <!-- Spain -->
+                <option value="+44">🇬🇧 +44</option>  <!-- United Kingdom -->
+                <option value="+1">🇺🇸 +1</option>   <!-- United States -->
+            </select>
+
+            <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                placeholder="917xxxxxxx"
+                inputmode="numeric"
+                required
+            >
+            </div>
         </div>
 
         <div class="form-input">

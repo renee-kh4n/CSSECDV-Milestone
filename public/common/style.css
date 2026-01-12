@@ -117,11 +117,17 @@ h2{
 
 
 /* ===== Forms ===== */
+.phone-number{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
 .form-input {
   margin-bottom: 18px;
 }
 
-input {
+input, #countryCode {
   width: 100%;
   padding: 10px;
   background: #0a0e1e;
