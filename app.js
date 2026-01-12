@@ -5,6 +5,7 @@ const exphbs = require('express-handlebars');
 const multer = require('multer');
 const upload = multer();
 const session = require('express-session');
+const supabase = require('./supabase');
 
 const app = express();
 
@@ -116,54 +117,121 @@ app.get('/admin', isAdmin, async (req, res) => {
   
 });
 
-app.post('/register',  upload.single('pfp'), async (req, res) =>{ 
-    console.log('app register');
-    console.log('Content-Type:', req.headers['content-type']);
-    console.log('Body:', req.body);
-    // res.send('ok');
-    console.log(req.file); // uploaded file
+// app.post('/register',  upload.single('pfp'), async (req, res) =>{ 
+//     console.log('app register');
+//     console.log('Content-Type:', req.headers['content-type']);
+//     console.log('Body:', req.body);
+//     // res.send('ok');
+//     console.log(req.file); // uploaded file
 
-    try{ 
-        // store image in supabase bucket
-        const { firstName, lastName, email, phoneNumber, password} = req.body;
+//     try{ 
+//         // store image in supabase bucket
+//         const { firstName, lastName, email, phoneNumber, password} = req.body;
 
-        if(!firstName || !lastName || !email || !phoneNumber || !password){
-            return res.status(400).send('Missing required fields');
-        }
+//         if(!firstName || !lastName || !email || !phoneNumber || !password){
+//             return res.status(400).send('Missing required fields');
+//         }
 
-        // check if mail exists
-        const chackMail = `SELECT user_ID, role, password FROM users WHERE email=$1`;
+//         // check if mail exists
+//         const chackMail = `SELECT user_ID, role, password FROM users WHERE email=$1`;
 
-        const rows = await pool.query(chackMail, [email]);
+//         const rows = await pool.query(chackMail, [email]);
 
-        if(rows.rowCount > 0){
-          console.log("email exists");
-          return res.json({
-            success: false
-          })
-        } 
+//         if(rows.rowCount > 0){
+//           console.log("email exists");
+//           return res.json({
+//             success: false
+//           })
+//         } 
 
-        const passwordHash = await bcrypt.hash(password, 10);
+//         const passwordHash = await bcrypt.hash(password, 10);
 
-        const query = `
-        INSERT INTO users
-            (first_name, last_name, email, phone_number, password)
-            VALUES ($1, $2, $3, $4, $5)`;
+//         const query = `
+//         INSERT INTO users
+//             (first_name, last_name, email, phone_number, password)
+//             VALUES ($1, $2, $3, $4, $5)`;
 
-        await pool.query(query, [
-            firstName, lastName, email, phoneNumber, passwordHash
-        ]);
+//         await pool.query(query, [
+//             firstName, lastName, email, phoneNumber, passwordHash
+//         ]);
 
-        console.log("uploaded contents to db");
-        return res.json({
-          success: true
-        });
+//         console.log("uploaded contents to db");
+//         return res.json({
+//           success: true
+//         });
         
-    }catch(err){
-        console.error(err);
-        return res.status(500).send('Server Error');
+//     }catch(err){
+//         console.error(err);
+//         return res.status(500).send('Server Error');
+//     }
+// })
+
+
+
+app.post('/register', upload.single('pfp'), async (req, res) => {
+  try {
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image uploaded' });
     }
-})
+
+    if(!firstName || !lastName || !email || !phoneNumber || !password){
+        return res.status(400).send('Missing required fields');
+    }
+
+    // check if mail exists
+    const chackMail = `SELECT user_ID, role, password FROM users WHERE email=$1`;
+
+    const rows = await pool.query(chackMail, [email]);
+
+    if(rows.rowCount > 0){
+      console.log("email exists");
+      return res.json({
+        success: false
+      })
+    } 
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Generate unique filename
+    const fileExt = req.file.originalname.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+
+    // Upload to Supabase bucket
+    const { data, error } = await supabase.storage
+      .from('pfp')
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype
+      });
+
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ success: false });
+    }
+
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage
+      .from('pfp')
+      .getPublicUrl(fileName);
+
+    const imageUrl = publicUrlData.publicUrl;
+
+    // Save imageUrl in database
+    await pool.query(
+      `INSERT INTO users (first_name, last_name, email, phone_number, password, pfp)
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [firstName, lastName, email, phoneNumber, passwordHash, imageUrl]
+    );
+
+    return res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false });
+  }
+});
+
 
 app.post('/login', async (req, res) => {
     console.log(req.body);
