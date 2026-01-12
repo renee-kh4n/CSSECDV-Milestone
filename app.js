@@ -4,8 +4,16 @@ const pool = require('./db');
 const exphbs = require('express-handlebars');
 const multer = require('multer');
 const upload = multer();
+const session = require('express-session');
 
 const app = express();
+
+app.use(session({
+  secret: 'someVerySecretString',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60 * 60 * 1000 } // 1 hour
+}));
 
 // Parse form data
 app.use(express.urlencoded({ extended: false }));
@@ -31,7 +39,19 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.get('/admin', async (req, res) => {
+// auth middleware
+function isAdmin(req, res, next){
+  if(req.session.user && req.session.user.role === 'admin'){
+    return next();
+  }else{
+    return res.status(403).send('Access Denied!');
+  }
+
+}
+
+app.get('/admin', isAdmin, async (req, res) => {
+
+
 
   try{
     const query = `SELECT * FROM users`;
@@ -105,11 +125,6 @@ app.post('/register',  upload.single('pfp'), async (req, res) =>{
     }
 })
 
-// app.post('/login', (req, res) =>{
-//     console.log(req.body);
-//     res.redirect('/admin'); //change, for testing purposes only
-// })
-
 app.post('/login', async (req, res) => {
     console.log(req.body);
   try{
@@ -136,6 +151,14 @@ app.post('/login', async (req, res) => {
 
     const match = await bcrypt.compare(password, user.password);
     if(match){
+
+      //save user session
+
+      req.session.user = {
+        id: user.user_ID,
+        role: user.role
+      }
+
       console.log("correct password");
       return res.json({
         success: true,
@@ -156,6 +179,14 @@ app.post('/login', async (req, res) => {
   }
 
 })
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error(err);
+    res.redirect('/login');
+  });
+});
+
 
 // Start server
 const PORT = 3000;
