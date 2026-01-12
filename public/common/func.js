@@ -26,10 +26,11 @@ const loginForm = document.getElementById('login-form');
       //console.log(data.success);
 
       if(data.success){ 
+        //console.log(data.role);
         if(data.role === 'admin')
           window.location.href = '/admin';
         else 
-          window.location.href = '/admin';
+          window.location.href = '/home';
       }else{ 
         //console.log("login error message");
         document.getElementById('error-login').textContent= "Invalid Credentials";

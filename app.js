@@ -26,18 +26,6 @@ app.use(express.static('public'));
 app.engine('hbs', exphbs.engine({ extname: 'hbs' }));
 app.set('view engine', 'hbs');
 
-// Routes
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-
-app.get('/login', (req, res) => {
-  res.render('login', { title: 'Login' });
-});
-
-app.get('/register', (req, res) => {
-  res.render('register', { title: 'Register' });
-});
 
 // auth middleware
 function isAdmin(req, res, next){
@@ -48,6 +36,38 @@ function isAdmin(req, res, next){
   }
 
 }
+
+function isLoggedin(req, res, next){
+  if(req.session.user){
+    return next();
+  }else{
+    return res.status(403).send('Access Denied!');
+  }
+
+}
+
+// Routes
+app.get('/', (req, res) => {
+  if(req.session.user){
+    res.redirect('/home');
+  }else{
+    res.redirect('/login');
+  }
+  
+});
+
+app.get('/home', isLoggedin, (req,res) => {
+  res.render('home', { title: 'Home Page'});
+})
+
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login' });
+});
+
+app.get('/register', (req, res) => {
+  res.render('register', { title: 'Register' });
+});
+
 
 app.get('/admin', isAdmin, async (req, res) => {
 
