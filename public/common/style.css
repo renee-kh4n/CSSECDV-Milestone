@@ -23,12 +23,12 @@ body {
     radial-gradient(circle at top, #141a3a, #05070f);
   color: var(--text-main);
   min-height: 100vh;
-  padding: 20px;
+  padding: 50px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
   justify-content: flex-start;
-
+  margin: 0;
 }
 
 body > * {
@@ -67,6 +67,17 @@ h2{
   padding: 12px 20px;
   border-bottom: 1px solid rgba(0, 246, 255, 0.4);
   box-shadow: var(--glow);
+  /* height: 100%; */
+  width: 20%;
+}
+
+nav ul{
+  list-style: none;   /* removes the bullets */
+  padding: 0;         /* remove default padding */
+  margin: 0;          /* remove default margin */
+  display: flex;     
+  flex-direction: column;
+  gap: 20px;          /* space between items */
 }
 
 .navbar a {
@@ -84,7 +95,7 @@ h2{
 
 /* ===== Main Container ===== */
 .container {
-  max-width: 600px;
+  width: 100%;
   margin: 50px auto;
   background: linear-gradient(
     180deg,
@@ -100,8 +111,9 @@ h2{
 }
 
 .admin-panel {
+  /* height: 100%; */
   width: fit-content;
-  margin: 50px auto;
+  margin: 0 50px ;
   background: linear-gradient(
     180deg,
     rgba(17, 22, 42, 0.95),

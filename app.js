@@ -22,8 +22,16 @@ app.use(express.json());
 // Serve frontend assets
 app.use(express.static('public'));
 
+
 // Handlebars setup
-app.engine('hbs', exphbs.engine({ extname: 'hbs' }));
+const hbs = exphbs.create({
+  extname: 'hbs',
+  helpers: {
+    eq: (a, b) => a === b
+  }
+});
+
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
 
@@ -45,6 +53,11 @@ function isLoggedin(req, res, next){
   }
 
 }
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; // pass session to template
+  next();
+});
 
 // Routes
 app.get('/', (req, res) => {
@@ -71,6 +84,9 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
+
+
+
 
 
 app.get('/admin', isAdmin, async (req, res) => {
