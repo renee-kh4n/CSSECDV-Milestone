@@ -104,7 +104,7 @@ app.get('/admin', isAdmin, async (req, res) => {
       lastName: u.last_name,
       email: u.email,
       phoneNumber: u.phone_number,
-      photo: u.photo || '',
+      pfp: u.pfp || '',
       role: u.role
     }));
 
