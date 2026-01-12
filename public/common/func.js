@@ -47,7 +47,7 @@ phoneInput.addEventListener('input', () => {
           window.location.href = '/admin';
       }else{ 
         //console.log("login error message");
-        document.getElementById('error-message').textContent= "Invalid Credentials";
+        document.getElementById('error-login').textContent= "Invalid Credentials";
       }
 
 
@@ -62,12 +62,15 @@ phoneInput.addEventListener('input', () => {
 
           const formData = new FormData(registerForm);
 
+          console.log('in func js: register');
+          console.log(formData);
+
           const countryCode = registerForm.countryCode.value;
           const number = registerForm.phoneNumber.value.replace(/\D/g, '');
           formData.set('phoneNumber', `${countryCode} ${number}`);
           formData.delete('countryCode');
 
-          fetch('/register', {
+          const res = await fetch('/register', {
           method: 'POST',
           body: formData
           });
@@ -89,14 +92,14 @@ phoneInput.addEventListener('input', () => {
           //     body: JSON.stringify(formData)
           // });
 
-          console.log('in func js: register');
-          console.log(formData);
-        // alert('Registration submitted (frontend only)');
+         
 
         const data = await res.json();
 
         if(data.success){
-          window.location.href('/login');
+          window.location.href = '/login';
+        } else{
+          document.getElementById('error-register').textContent= "User with email already exists!"; //does not work here
         }
 
     });

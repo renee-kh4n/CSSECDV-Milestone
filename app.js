@@ -71,6 +71,18 @@ app.post('/register',  upload.single('pfp'), async (req, res) =>{
             return res.status(400).send('Missing required fields');
         }
 
+        // check if mail exists
+        const chackMail = `SELECT user_ID, role, password FROM users WHERE email=$1`;
+
+        const rows = await pool.query(chackMail, [email]);
+
+        if(rows.rowCount > 0){
+          console.log("email exists");
+          return res.json({
+            success: false
+          })
+        } 
+
         const passwordHash = await bcrypt.hash(password, 10);
 
         const query = `
