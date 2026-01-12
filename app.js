@@ -60,6 +60,10 @@ app.get('/home', isLoggedin, (req,res) => {
   res.render('home', { title: 'Home Page'});
 })
 
+app.get('/profile', isLoggedin, (req,res) => {
+  res.render('profile', { title: 'profile'});
+})
+
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
