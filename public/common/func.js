@@ -1,21 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-const phoneInput = document.getElementById('phoneNumber');
-
-phoneInput.addEventListener('input', () => {
-  let v = phoneInput.value;
-
-  // Remove invalid characters
-  v = v.replace(/[^\d+\s]/g, '');
-
-  // Remove all spaces
-  v = v.replace(/\s+/g, '');
-
-  phoneInput.value = v; // allow backspace
-});
-
-
-  const loginForm = document.getElementById('login-form');
+const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', async e => {
       e.preventDefault();
@@ -57,6 +42,20 @@ phoneInput.addEventListener('input', () => {
 
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
+    const phoneInput = document.getElementById('phoneNumber');
+
+    phoneInput.addEventListener('input', () => {
+      let v = phoneInput.value;
+
+      // Remove invalid characters
+      v = v.replace(/[^\d+\s]/g, '');
+
+      // Remove all spaces
+      v = v.replace(/\s+/g, '');
+
+      phoneInput.value = v; // allow backspace
+    });
+
     registerForm.addEventListener('submit', async e => {
           e.preventDefault();
 
