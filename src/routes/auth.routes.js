@@ -98,19 +98,20 @@ router.post('/register', upload.single('pfp'), async (req, res) => {
             });
         }
 
+        const { fileTypeFromBuffer } = await import('file-type');
+        const type = await fileTypeFromBuffer(req.file.buffer);
+
+        if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
+            return res.status(400).json({ success: false, message: 'Invalid file type. Only JPG and PNG are allowed.' });
+        }
+
         const salt = crypto.randomBytes(16).toString('hex');
         const passwordHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
 
         // Generate unique filename
-        const fileExt = req.file.originalname.split('.').pop();
+        const fileExt = type.ext;  // Use the extension from the file type
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-
-        // Upload to Supabase bucket
-        const { data, error } = await supabase.storage
-            .from('pfp')
-            .upload(fileName, req.file.buffer, {
-                contentType: req.file.mimetype
-            });
+        const { data, error } = await supabase.storage.from('pfp').upload(fileName, req.file.buffer, { contentType: type.mime });
 
         if (error) {
             console.error(error);
