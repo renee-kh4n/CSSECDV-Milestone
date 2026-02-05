@@ -1,6 +1,5 @@
 <div class="container-forms">
     <h2>Login</h2>
-
     <form id="login-form" method="POST" action="/login">
         <div class="form-input">
             <label>Email: </label>
@@ -11,16 +10,9 @@
             <label>Password: </label>
             <input type="password" name="password" required>
         </div>
-
-        <!-- Show error message if present -->
-        <p class="error-message" id="error-login">
-            {{#if errorMessage}}
-                {{errorMessage}}
-            {{/if}}
-        </p>
+        <p class="error-message" id="error-login">{{errorMessage}}</p>
         <button class="submit-btn" type="submit">Login</button>
     </form>
-
     <p class="form-switch">
         Not a member? <a href="/register">Create an account</a>
     </p>

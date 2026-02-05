@@ -1,261 +1,265 @@
-/* ===== Cyberpunk Theme ===== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
 
 :root {
-  --neon-pink: #ff2fdc;
-  --neon-blue: #00f6ff;
-  --neon-purple: #7f5cff;
-  --bg-dark: #0b0f1a;
-  --panel-dark: #11162a;
-  --text-main: #e6f1ff;
-  --glow: 0 0 10px rgba(0, 246, 255, 0.6),
-          0 0 20px rgba(255, 47, 220, 0.3);
+    --neon-pink: #ff2fdc;
+    --neon-blue: #00f6ff;
+    --neon-purple: #7f5cff;
+    --bg-dark: #0b0f1a;
+    --panel-dark: #11162a;
+    --text-main: #e6f1ff;
+    --glow: 0 0 10px rgba(0, 246, 255, 0.6),
+        0 0 20px rgba(255, 47, 220, 0.3);
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 
 body {
-  font-family: 'Orbitron', Arial, sans-serif;
-  background:
-    radial-gradient(circle at top, #141a3a, #05070f);
-  color: var(--text-main);
-  min-height: 100vh;
-  padding: 50px;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: flex-start;
-  margin: 0;
+    font-family: 'Orbitron', Arial, sans-serif;
+    background:
+        radial-gradient(circle at top, #141a3a, #05070f);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    margin: 0;
 }
 
-body > * {
-  width: 100%;
-  max-width: 1200px;
+body>* {
+    width: 100%;
+    max-width: 1200px;
 }
 
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background:
-    linear-gradient(transparent 95%, rgba(0, 246, 255, 0.15) 100%),
-    linear-gradient(90deg, transparent 95%, rgba(255, 47, 220, 0.15) 100%);
-  background-size: 40px 40px;
-  animation: gridMove 20s linear infinite;
-  z-index: -2;
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        linear-gradient(transparent 95%, rgba(0, 246, 255, 0.15) 100%),
+        linear-gradient(90deg, transparent 95%, rgba(255, 47, 220, 0.15) 100%);
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+    z-index: -2;
 }
 
 @keyframes gridMove {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 400px 400px, -400px 400px; }
+    from {
+        background-position: 0 0, 0 0;
+    }
+
+    to {
+        background-position: 400px 400px, -400px 400px;
+    }
 }
 
-h2{
-  text-align: center;
+h2 {
+    text-align: center;
 }
 
 /* ===== Navbar ===== */
 .navbar {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 246, 255, 0.15),
-    rgba(255, 47, 220, 0.15)
-  );
-  padding: 12px 20px;
-  border-bottom: 1px solid rgba(0, 246, 255, 0.4);
-  box-shadow: var(--glow);
-  /* height: 100%; */
-  width: 20%;
+    background: linear-gradient(90deg,
+            rgba(0, 246, 255, 0.15),
+            rgba(255, 47, 220, 0.15));
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(0, 246, 255, 0.4);
+    box-shadow: var(--glow);
+    /* height: 100%; */
+    width: 20%;
 }
 
-nav ul{
-  list-style: none;   /* removes the bullets */
-  padding: 0;         /* remove default padding */
-  margin: 0;          /* remove default margin */
-  display: flex;     
-  flex-direction: column;
-  gap: 20px;          /* space between items */
+nav ul {
+    list-style: none;
+    /* removes the bullets */
+    padding: 0;
+    /* remove default padding */
+    margin: 0;
+    /* remove default margin */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* space between items */
 }
 
 .navbar a {
-  color: var(--neon-blue);
-  margin-right: 15px;
-  text-decoration: none;
-  letter-spacing: 1px;
-  transition: 0.3s;
+    color: var(--neon-blue);
+    margin-right: 15px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: 0.3s;
 }
 
 .navbar a:hover {
-  color: var(--neon-pink);
-  text-shadow: var(--glow);
+    color: var(--neon-pink);
+    text-shadow: var(--glow);
 }
 
 /* ===== Main Container ===== */
 .container-forms {
-  max-width: 600px;
-  height: fit-content;
-  margin: 50px auto;
-  background: linear-gradient(
-    180deg,
-    rgba(17, 22, 42, 0.95),
-    rgba(10, 14, 30, 0.95)
-  );
-  padding: 25px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 246, 255, 0.3);
-  box-shadow:
-    0 0 25px rgba(0, 246, 255, 0.15),
-    inset 0 0 10px rgba(255, 47, 220, 0.1);
+    max-width: 600px;
+    height: fit-content;
+    margin: 50px auto;
+    background: linear-gradient(180deg,
+            rgba(17, 22, 42, 0.95),
+            rgba(10, 14, 30, 0.95));
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    box-shadow:
+        0 0 25px rgba(0, 246, 255, 0.15),
+        inset 0 0 10px rgba(255, 47, 220, 0.1);
 }
 
 .container {
-  width: 100%;
-  margin: 50px auto;
-  background: linear-gradient(
-    180deg,
-    rgba(17, 22, 42, 0.95),
-    rgba(10, 14, 30, 0.95)
-  );
-  padding: 25px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 246, 255, 0.3);
-  box-shadow:
-    0 0 25px rgba(0, 246, 255, 0.15),
-    inset 0 0 10px rgba(255, 47, 220, 0.1);
+    width: 100%;
+    margin: 50px auto;
+    background: linear-gradient(180deg,
+            rgba(17, 22, 42, 0.95),
+            rgba(10, 14, 30, 0.95));
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    box-shadow:
+        0 0 25px rgba(0, 246, 255, 0.15),
+        inset 0 0 10px rgba(255, 47, 220, 0.1);
 }
 
 .admin-panel {
-  /* height: 100%; */
-  width: fit-content;
-  margin: 0 50px ;
-  background: linear-gradient(
-    180deg,
-    rgba(17, 22, 42, 0.95),
-    rgba(10, 14, 30, 0.95)
-  );
-  padding: 25px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 246, 255, 0.3);
-  box-shadow:
-    0 0 25px rgba(0, 246, 255, 0.15),
-    inset 0 0 10px rgba(255, 47, 220, 0.1);
+    /* height: 100%; */
+    width: fit-content;
+    margin: 0 50px;
+    background: linear-gradient(180deg,
+            rgba(17, 22, 42, 0.95),
+            rgba(10, 14, 30, 0.95));
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    box-shadow:
+        0 0 25px rgba(0, 246, 255, 0.15),
+        inset 0 0 10px rgba(255, 47, 220, 0.1);
 }
 
 
 /* ===== Forms ===== */
-.phone-number{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
+.phone-number {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 .form-input {
-  margin-bottom: 18px;
+    margin-bottom: 18px;
 }
 
-input, #countryCode {
-  width: 100%;
-  padding: 10px;
-  background: #0a0e1e;
-  border: 1px solid rgba(0, 246, 255, 0.4);
-  color: var(--text-main);
-  border-radius: 6px;
-  outline: none;
-  transition: 0.3s;
+input,
+#countryCode {
+    width: 100%;
+    padding: 10px;
+    background: #0a0e1e;
+    border: 1px solid rgba(0, 246, 255, 0.4);
+    color: var(--text-main);
+    border-radius: 6px;
+    outline: none;
+    transition: 0.3s;
 }
 
 input:focus {
-  border-color: var(--neon-pink);
-  box-shadow: var(--glow);
+    border-color: var(--neon-pink);
+    box-shadow: var(--glow);
 }
 
 /* ===== Buttons ===== */
 button {
-  padding: 12px 18px;
-  background: linear-gradient(
-    135deg,
-    var(--neon-blue),
-    var(--neon-purple)
-  );
-  border: none;
-  color: #05070f;
-  font-weight: 600;
-  letter-spacing: 1px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: var(--glow);
-  transition: 0.3s;
-  width: 100%;
+    padding: 12px 18px;
+    background: linear-gradient(135deg,
+            var(--neon-blue),
+            var(--neon-purple));
+    border: none;
+    color: #05070f;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: var(--glow);
+    transition: 0.3s;
+    width: 100%;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 15px var(--neon-blue),
-    0 0 30px var(--neon-pink);
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 15px var(--neon-blue),
+        0 0 30px var(--neon-pink);
 }
 
 /* ===== Error Message ===== */
 .error-message {
-  text-align: center;
-  color: red;
-  text-shadow: 0 0 6px rgba(255, 47, 220, 0.6);
-  letter-spacing: 2px; /* adds spacing between letters */
-  font-weight: 600; /* optional: makes it stand out more */
-  text-transform: uppercase; /* optional: extra cyberpunk flair */
-  font-size: 0.85rem; 
+    text-align: center;
+    color: red;
+    text-shadow: 0 0 6px rgba(255, 47, 220, 0.6);
+    letter-spacing: 2px;
+    /* adds spacing between letters */
+    font-weight: 600;
+    /* optional: makes it stand out more */
+    text-transform: uppercase;
+    /* optional: extra cyberpunk flair */
+    font-size: 0.85rem;
 }
 
 
 /* ===== Admin Table ===== */
 .admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
 .admin-table th,
 .admin-table td {
-  border: 1px solid rgba(0, 246, 255, 0.3);
-  padding: 10px;
-  text-align: left;
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    padding: 10px;
+    text-align: left;
 }
 
 .admin-table th {
-  background: rgba(0, 246, 255, 0.1);
-  color: var(--neon-blue);
+    background: rgba(0, 246, 255, 0.1);
+    color: var(--neon-blue);
 }
 
 .admin-table tr:hover td {
-  background: rgba(255, 47, 220, 0.08);
+    background: rgba(255, 47, 220, 0.08);
 }
 
 /* ===== Profile Picture ===== */
 .pfp-admin-view {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid var(--neon-blue);
-  box-shadow: var(--glow);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-blue);
+    box-shadow: var(--glow);
 }
 
 /* ===== Form Switch ===== */
 .form-switch {
-  margin-top: 18px;
-  font-size: 0.85em;
-  text-align: center;
+    margin-top: 18px;
+    font-size: 0.85em;
+    text-align: center;
 }
 
 .form-switch a {
-  color: var(--neon-blue);
-  text-decoration: none;
-  transition: 0.3s;
+    color: var(--neon-blue);
+    text-decoration: none;
+    transition: 0.3s;
 }
 
 .form-switch a:hover {
-  color: var(--neon-pink);
-  text-shadow: var(--glow);
+    color: var(--neon-pink);
+    text-shadow: var(--glow);
 }
