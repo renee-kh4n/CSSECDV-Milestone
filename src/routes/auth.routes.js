@@ -4,6 +4,20 @@ const pool = require('../db');
 const supabase = require('../supabase');
 
 const crypto = require('crypto');
+const emailValidator = require('deep-email-validator');
+
+async function validateUserEmail(email) {
+  const result = await emailValidator.validate(email);
+
+  if (result.valid) {
+    return { success: true };
+  } else {
+    return { 
+      success: false, 
+      message: `Please provide a valid email. Failed at: ${result.reason}` 
+    };
+  }
+}
 
 const upload = multer();
 const router = express.Router();
@@ -247,6 +261,11 @@ router.post('/register', upload.single('pfp'), async (req, res) => {
 
         if (!firstName || !lastName || !email || !phoneNumber || !password) {
             return res.status(400).send('Missing required fields');
+        }
+
+        const check = await validateUserEmail(email);
+        if (!check.success) {
+            return res.status(400).json(check);
         }
 
         // Check if email already exists
