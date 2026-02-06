@@ -120,7 +120,7 @@ router.post('/register', upload.single('pfp'), async (req, res) => {
         }
 
         const salt = crypto.randomBytes(16).toString('hex');
-        const passwordHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+        const passwordHash = crypto.pbkdf2Sync(password, salt, 4096, 64, 'sha512').toString('hex');
 
         // Generate unique filename
         const fileExt = type.ext;  // Use the extension from the file type
@@ -179,7 +179,7 @@ router.post('/login', async (req, res) => {
         const { password: storedPasswordHash, salt } = user;
 
         // Hash the input password and compare it
-        const inputPasswordHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+        const inputPasswordHash = crypto.pbkdf2Sync(password, salt, 4096, 64, 'sha512').toString('hex');
 
         if (inputPasswordHash === storedPasswordHash) {
             req.session.user = {
