@@ -4,23 +4,36 @@ const pool = require('../db');
 const supabase = require('../supabase');
 
 const crypto = require('crypto');
+const rateLimit = require("express-rate-limit");
+
 const emailValidator = require('deep-email-validator');
 
 async function validateUserEmail(email) {
-  const result = await emailValidator.validate(email);
+    const result = await emailValidator.validate(email);
 
-  if (result.valid) {
-    return { success: true };
-  } else {
-    return { 
-      success: false, 
-      message: `Please provide a valid email. Failed at: ${result.reason}` 
-    };
-  }
+    if (result.valid) {
+        return { success: true };
+    } else {
+        return {
+            success: false,
+            message: `Please provide a valid email. Failed at: ${result.reason}`
+        };
+    }
 }
 
 const upload = multer();
 const router = express.Router();
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+
+    handler: (req, res) => {
+        return res.status(429).render("login", {
+            errorMessage: "Too many login attempts. Please wait 15 minutes before trying again."
+        });
+    }
+});
 
 function isAdmin(req, res, next) {
     if (req.session.user && req.session.user.role === 'admin') {
@@ -159,7 +172,7 @@ router.post('/register', upload.single('pfp'), async (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     console.log(req.body);
     try {
         const { email, password } = req.body;
@@ -206,109 +219,6 @@ router.post('/login', async (req, res) => {
 
 })
 
-/*
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        if (!email || !password) {
-            return res.status(400).send('Missing required fields');
-        }
-
-        const query = `SELECT user_ID, role, password, salt FROM users WHERE email=$1`;
-        const rows = await pool.query(query, [email]);
-
-        if (rows.rowCount < 1) {
-            return res.json({
-                success: false
-            });
-        }
-
-        const user = rows.rows[0];
-        const { password: storedPasswordHash, salt } = user;
-
-        // Hash the input password and compare it
-        const inputPasswordHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-
-        if (inputPasswordHash === storedPasswordHash) {
-            req.session.user = {
-                id: user.user_ID,
-                role: user.role
-            };
-
-            return res.json({
-                success: true,
-                role: user.role
-            });
-        } else {
-            return res.json({
-                success: false
-            });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
-});
-
-// Handle form submission for registration
-router.post('/register', upload.single('pfp'), async (req, res) => {
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
-
-    try {
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: 'No image uploaded' });
-        }
-
-        if (!firstName || !lastName || !email || !phoneNumber || !password) {
-            return res.status(400).send('Missing required fields');
-        }
-
-        const check = await validateUserEmail(email);
-        if (!check.success) {
-            return res.status(400).json(check);
-        }
-
-        // Check if email already exists
-        const checkMail = `SELECT user_ID FROM users WHERE email=$1`;
-        const rows = await pool.query(checkMail, [email]);
-
-        if (rows.rowCount > 0) {
-            return res.json({ success: false });
-        }
-
-        // Hash the password before saving
-        const salt = crypto.randomBytes(16).toString('hex');
-        const passwordHash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-
-        // Upload the profile picture to Supabase
-        const fileExt = req.file.originalname.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-        const { data, error } = await supabase.storage.from('pfp').upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
-
-        if (error) {
-            console.error(error);
-            return res.status(500).json({ success: false });
-        }
-
-        // Get public URL of the uploaded file
-        const { data: publicUrlData } = supabase.storage.from('pfp').getPublicUrl(fileName);
-        const imageUrl = publicUrlData.publicUrl;
-
-        // Insert new user into the database
-        await pool.query(
-            `INSERT INTO users (first_name, last_name, email, phone_number, password, salt, pfp) 
-      VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-            [firstName, lastName, email, phoneNumber, passwordHash, salt, imageUrl]
-        );
-
-        return res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ success: false });
-    }
-});
-*/
 router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) console.error(err);
