@@ -7,8 +7,7 @@
     --bg-dark: #0b0f1a;
     --panel-dark: #11162a;
     --text-main: #e6f1ff;
-    --glow: 0 0 10px rgba(0, 246, 255, 0.6),
-        0 0 20px rgba(255, 47, 220, 0.3);
+    --glow: 0 0 10px rgba(0, 246, 255, 0.6), 0 0 20px rgba(255, 47, 220, 0.3);
 }
 
 *,
@@ -20,8 +19,7 @@
 
 body {
     font-family: 'Orbitron', Arial, sans-serif;
-    background:
-        radial-gradient(circle at top, #141a3a, #05070f);
+    background: radial-gradient(circle at top, #141a3a, #05070f);
     color: var(--text-main);
     min-height: 100vh;
     padding: 50px;
@@ -38,12 +36,10 @@ body>* {
 }
 
 body::before {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
-    background:
-        linear-gradient(transparent 95%, rgba(0, 246, 255, 0.15) 100%),
-        linear-gradient(90deg, transparent 95%, rgba(255, 47, 220, 0.15) 100%);
+    background: linear-gradient(transparent 95%, rgba(0, 246, 255, 0.15) 100%), linear-gradient(90deg, transparent 95%, rgba(255, 47, 220, 0.15) 100%);
     background-size: 40px 40px;
     animation: gridMove 20s linear infinite;
     z-index: -2;
@@ -63,29 +59,21 @@ h2 {
     text-align: center;
 }
 
-/* ===== Navbar ===== */
 .navbar {
-    background: linear-gradient(90deg,
-            rgba(0, 246, 255, 0.15),
-            rgba(255, 47, 220, 0.15));
+    background: linear-gradient(90deg, rgba(0, 246, 255, 0.15), rgba(255, 47, 220, 0.15));
     padding: 12px 20px;
     border-bottom: 1px solid rgba(0, 246, 255, 0.4);
     box-shadow: var(--glow);
-    /* height: 100%; */
     width: 20%;
 }
 
 nav ul {
     list-style: none;
-    /* removes the bullets */
     padding: 0;
-    /* remove default padding */
     margin: 0;
-    /* remove default margin */
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* space between items */
 }
 
 .navbar a {
@@ -101,53 +89,27 @@ nav ul {
     text-shadow: var(--glow);
 }
 
-/* ===== Main Container ===== */
 .container-forms {
     max-width: 600px;
     height: fit-content;
     margin: 50px auto;
-    background: linear-gradient(180deg,
-            rgba(17, 22, 42, 0.95),
-            rgba(10, 14, 30, 0.95));
+    background: linear-gradient(180deg, rgba(17, 22, 42, 0.95), rgba(10, 14, 30, 0.95));
     padding: 25px;
     border-radius: 10px;
     border: 1px solid rgba(0, 246, 255, 0.3);
-    box-shadow:
-        0 0 25px rgba(0, 246, 255, 0.15),
-        inset 0 0 10px rgba(255, 47, 220, 0.1);
+    box-shadow: 0 0 25px rgba(0, 246, 255, 0.15), inset 0 0 10px rgba(255, 47, 220, 0.1);
 }
 
 .container {
     width: 100%;
-    margin: 50px auto;
-    background: linear-gradient(180deg,
-            rgba(17, 22, 42, 0.95),
-            rgba(10, 14, 30, 0.95));
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 246, 255, 0.3);
-    box-shadow:
-        0 0 25px rgba(0, 246, 255, 0.15),
-        inset 0 0 10px rgba(255, 47, 220, 0.1);
-}
-
-.admin-panel {
-    /* height: 100%; */
-    width: fit-content;
     margin: 0 50px;
-    background: linear-gradient(180deg,
-            rgba(17, 22, 42, 0.95),
-            rgba(10, 14, 30, 0.95));
+    background: linear-gradient(180deg, rgba(17, 22, 42, 0.95), rgba(10, 14, 30, 0.95));
     padding: 25px;
     border-radius: 10px;
     border: 1px solid rgba(0, 246, 255, 0.3);
-    box-shadow:
-        0 0 25px rgba(0, 246, 255, 0.15),
-        inset 0 0 10px rgba(255, 47, 220, 0.1);
+    box-shadow: 0 0 25px rgba(0, 246, 255, 0.15), inset 0 0 10px rgba(255, 47, 220, 0.1);
 }
 
-
-/* ===== Forms ===== */
 .phone-number {
     display: flex;
     flex-direction: row;
@@ -158,8 +120,7 @@ nav ul {
     margin-bottom: 18px;
 }
 
-input,
-#countryCode {
+input {
     width: 100%;
     padding: 10px;
     background: #0a0e1e;
@@ -168,6 +129,19 @@ input,
     border-radius: 6px;
     outline: none;
     transition: 0.3s;
+    font-family: 'Orbitron';
+}
+
+#countryCode {
+    padding: 10px;
+    background: #0a0e1e;
+    border: 1px solid rgba(0, 246, 255, 0.4);
+    color: var(--text-main);
+    border-radius: 6px;
+    outline: none;
+    transition: 0.3s;
+    font-family: 'Orbitron';
+    white-space: nowrap;
 }
 
 input:focus {
@@ -175,7 +149,6 @@ input:focus {
     box-shadow: var(--glow);
 }
 
-/* ===== Buttons ===== */
 button {
     padding: 12px 18px;
     background: linear-gradient(135deg,
@@ -199,22 +172,16 @@ button:hover {
         0 0 30px var(--neon-pink);
 }
 
-/* ===== Error Message ===== */
 .error-message {
     text-align: center;
     color: red;
     text-shadow: 0 0 6px rgba(255, 47, 220, 0.6);
     letter-spacing: 2px;
-    /* adds spacing between letters */
     font-weight: 600;
-    /* optional: makes it stand out more */
     text-transform: uppercase;
-    /* optional: extra cyberpunk flair */
     font-size: 0.85rem;
 }
 
-
-/* ===== Admin Table ===== */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -237,7 +204,6 @@ button:hover {
     background: rgba(255, 47, 220, 0.08);
 }
 
-/* ===== Profile Picture ===== */
 .pfp-admin-view {
     width: 42px;
     height: 42px;
@@ -246,7 +212,6 @@ button:hover {
     box-shadow: var(--glow);
 }
 
-/* ===== Form Switch ===== */
 .form-switch {
     margin-top: 18px;
     font-size: 0.85em;

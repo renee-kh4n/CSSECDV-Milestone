@@ -1,10 +1,9 @@
 {
   "name": "cssecdv-milestone1",
   "version": "1.0.0",
-  "description": "Requirements:\r 1. Registration Screen\r     a. Fullname\r     b. Email\r     c. Phone Number\r     d. Profile photo\r 2. Login Screen\r 3. Administration panel\r 4. Security Features discussed in class\r     a. Anti brute-force protection\r     b. password hashing with salting\r     c. input validation\r     d. file upload type detection\r 5. Must be SQL based",
-  "main": "index.js",
+  "description": "",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -14,14 +13,17 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.90.1",
     "body-parser": "^2.2.2",
-    "deep-email-validator": "^0.1.21",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-handlebars": "^8.0.5",
     "express-rate-limit": "^8.2.1",
     "express-session": "^1.18.2",
+    "file-type": "^21.3.0",
+    "helmet": "^8.1.0",
     "multer": "^2.0.2",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.3.6"
   },
   "type": "commonjs",
   "devDependencies": {

@@ -1,6 +1,5 @@
-<div class="admin-panel">
+<div class="container">
     <h2>Admin Panel</h2>
-
     <table class="admin-table">
         <thead>
             <tr>
@@ -10,7 +9,6 @@
                 <th>Phone number</th>
                 <th>Photo</th>
                 <th>Role</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,13 +19,11 @@
                 <td>{{this.email}}</td>
                 <td>{{this.phoneNumber}}</td>
                 <td>
-                    <img src="{{this.pfp}}" class="pfp-admin-view">
+                    <img src="{{this.pfp}}" class="pfp-admin-view" crossorigin>
                 </td>
                 <td>{{this.role}}</td>
-                <td class="danger-btn">Delete User</td>
             </tr>
             {{/each}}
         </tbody>
     </table>
-
 </div>

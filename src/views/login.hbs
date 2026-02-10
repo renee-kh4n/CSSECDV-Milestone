@@ -3,15 +3,15 @@
     <form id="login-form" method="POST" action="/login">
         <div class="form-input">
             <label>Email: </label>
-            <input type="email" name="email" required>
+            <input type="email" name="email" required {{#if disabled}}disabled{{/if}}>
         </div>
 
         <div class="form-input">
             <label>Password: </label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" minlength="8" required {{#if disabled}}disabled{{/if}}>
         </div>
         <p class="error-message" id="error-login">{{errorMessage}}</p>
-        <button class="submit-btn" type="submit">Login</button>
+        <button class="submit-btn" type="submit" {{#if disabled}}disabled{{/if}}>Login</button>
     </form>
     <p class="form-switch">
         Not a member? <a href="/register">Create an account</a>

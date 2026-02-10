@@ -1,54 +1,38 @@
 <div class="container-forms">
     <h2>Register</h2>
-
     <form id="register-form" method="POST" action="/register" enctype="multipart/form-data">
         <div class="form-input">
             <label>First Name: </label>
             <input type="text" name="firstName" required>
         </div>
-
         <div class="form-input">
             <label>Last Name: </label>
             <input type="text" name="lastName" required>
         </div>
-
         <div class="form-input">
             <label>Email: </label>
             <input type="email" name="email" required>
         </div>
-
         <div class="form-input">
             <label>Phone Number</label>
             <div class="phone-number">
-            <option value="+63">🇵🇭 +63</option>  <!-- Philippines -->
-            <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                placeholder="917xxxxxxx"
-                inputmode="numeric"
-                required
-            >
+                <span id="countryCode" name="countryCode">🇵🇭 +63</span>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="9XXXXXXXXX" inputmode="numeric" required>
             </div>
         </div>
-
         <div class="form-input">
             <label>Profile Photo: </label>
             <input type="file" name="pfp" id="pfp" accept="image/jpeg, image/png" required>
         </div>
-
         <div class="form-input">
             <label>Password: </label>
-            <input type="password" name="password" 
-            minlength="8" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}" 
-            title="Password must be at least 8 characters and include a letter, a number, and a special character." required>
-            
+            <input type="password" name="password" minlength="8" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}"
+                title="Password must be at least 8 characters and include a letter, a number, and a special character."
+                required>
         </div>
-
-         <p class="error-message" id="error-register">{{errorMessage}}</p>
+        <p class="error-message" id="error-register">{{errorMessage}}</p>
         <button class="submit-btn" type="submit">Register</button>
     </form>
-
     <p class="form-switch">
         Already a member? <a href="/login">Log in to your account</a>
     </p>
