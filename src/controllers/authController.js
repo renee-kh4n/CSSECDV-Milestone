@@ -4,6 +4,7 @@ const userModel = require('../models/userModel');
 
 const supabase = require('../supabase');
 
+const { z } = require('zod');
 
 exports.showLoginPage = (req, res) => {
     res.render('login', { title: 'Login' });
@@ -13,9 +14,33 @@ exports.showRegisterPage = (req, res) => {
     res.render('register', { title: 'Register' });
 };
 
+const registerSchema = z.object({
+    firstName: z.string().min(2, "First name is too short").max(50).trim(),
+    lastName: z.string().min(2, "Last name is too short").max(50).trim(),
+    email: z.string().email({ message: "Invalid email format" }).trim().toLowerCase(),
+    phoneNumber: z.string()
+        .trim()
+        .regex(
+            /^(0\d{11}|\d{11})$/, 
+            "Enter a valid Philippine phone number"
+        ),
+    password: z.string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[0-9]/, "Password must contain at least one number")
+        .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character")
+});
+
 exports.registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, phoneNumber, password } = req.body;
+        const result = registerSchema.safeParse(req.body);
+        
+        if (!result.success) {
+            return res.status(400).render('register', { 
+                errorMessage: result.error.issues[0].message
+            });
+        }
+
+        const { firstName, lastName, email, phoneNumber, password } = result.data;
 
         if (!req.file) {
             return res.status(400).render('register', { errorMessage: 'No image uploaded' });
