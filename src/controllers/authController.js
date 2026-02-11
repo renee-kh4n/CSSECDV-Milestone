@@ -35,28 +35,28 @@ exports.registerUser = async (req, res) => {
         const result = registerSchema.safeParse(req.body);
         
         if (!result.success) {
-            return res.status(400).render('register', { 
-                errorMessage: result.error.issues[0].message
-            });
+            req.flash('error', result.error.issues[0].message);
+            return res.status(400).redirect('/register');
         }
 
         const { firstName, lastName, email, phoneNumber, password } = result.data;
 
         if (!req.file) {
-            return res.status(400).render('register', { errorMessage: 'No image uploaded' });
+            req.flash('error', 'No image uploaded');
+            return res.status(400).redirect('/register');
         }
 
         const userAlreadyExists = await userModel.userExists(email);
         if (userAlreadyExists) {
-            return res.render('register', {
-                errorMessage: 'User with this email already exists!'
-            });
+            req.flash('error', 'User with this email already exists!');
+            return res.status(400).redirect('/register');
         }
 
         const { fileTypeFromBuffer } = await import('file-type');
         const type = await fileTypeFromBuffer(req.file.buffer);
         if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
-            return res.status(400).render('register', { errorMessage: 'Invalid file type. Only JPG and PNG are allowed.' });
+            req.flash('error', 'Invalid file type. Only JPG and PNG are allowed.');
+            return res.status(400).redirect('/register');
         }
 
         const salt = crypto.randomBytes(16).toString('hex');
@@ -68,7 +68,8 @@ exports.registerUser = async (req, res) => {
 
         if (error) {
             console.error(error);
-            return res.status(500).render('register', { errorMessage: 'Server error' });
+            req.flash('error', 'Server error');
+            return res.status(500).redirect('/register');
         }
 
         const { data: publicUrlData } = supabase.storage.from('pfp').getPublicUrl(fileName);
@@ -80,17 +81,35 @@ exports.registerUser = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        return res.status(500).render('register', { errorMessage: 'Server error' });
+        req.flash('error', 'Server error');
+        return res.status(500).redirect('/register');
     }
 };
 
+const loginSchema = z.object({
+    email: z.string().email().trim().toLowerCase(),
+    password: z.string()
+        .min(8)
+        .regex(/[0-9]/)
+        .regex(/[^a-zA-Z0-9]/)
+});
+
 exports.loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const result = loginSchema.safeParse(req.body);
+
+        if (!result.success) {
+            req.flash('error', 'Invalid credentials');
+            return res.status(400).redirect('/login');
+        }
+
+        const { email, password } = result.data;
 
         const user = await userModel.getUserByEmail(email);
+
         if (!user) {
-            return res.render('login', { errorMessage: 'Invalid credentials' });
+            req.flash('error', 'Invalid credentials');
+            return res.status(400).redirect('/login');
         }
 
         const { password: storedPasswordHash, salt } = user;
@@ -107,10 +126,12 @@ exports.loginUser = async (req, res) => {
                 return res.redirect('/home');
             }
         } else {
-            return res.render('login', { errorMessage: 'Invalid credentials' });
+            req.flash('error', 'Invalid credentials');
+            return res.status(400).redirect('/login');
         }
     } catch (err) {
-        return res.status(500).render('login', { errorMessage: 'Server error' });
+        req.flash('error', 'Server error');
+        return res.status(500).redirect('/login');
     }
 };
 

@@ -6,6 +6,7 @@ const exphbs = require('express-handlebars');
 const helmet = require('helmet');
 const path = require('path');
 const pool = require('./src/db');
+const flash = require('connect-flash');
 
 const routes = require('./src/routes/index')
 
@@ -49,16 +50,18 @@ app.use(session({
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 1000
+        maxAge: 10 * 60 * 1000
     }
 }));
+
+app.use(flash());
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
 
 app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
+    res.locals.errorMessage = req.flash('error');
     next();
 });
 
