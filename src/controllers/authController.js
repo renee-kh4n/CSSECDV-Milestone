@@ -21,7 +21,7 @@ const registerSchema = z.object({
     phoneNumber: z.string()
         .trim()
         .regex(
-            /^(0\d{11}|\d{11})$/, 
+            /^(0\d{10}|\d{10})$/, 
             "Enter a valid Philippine phone number"
         ),
     password: z.string()
