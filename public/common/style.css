@@ -32,7 +32,7 @@ body {
 
 body>* {
     width: 100%;
-    max-width: 1200px;
+    max-width: none;     
 }
 
 body::before {
@@ -65,6 +65,8 @@ h2 {
     border-bottom: 1px solid rgba(0, 246, 255, 0.4);
     box-shadow: var(--glow);
     width: 20%;
+    height: calc(100vh - 100px);
+    display: flex;          /* ADD */
 }
 
 nav ul {
@@ -74,6 +76,7 @@ nav ul {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex: 1; 
 }
 
 .navbar a {
@@ -204,7 +207,7 @@ button:hover {
     background: rgba(255, 47, 220, 0.08);
 }
 
-.pfp-admin-view {
+.pfp {
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -227,4 +230,8 @@ button:hover {
 .form-switch a:hover {
     color: var(--neon-pink);
     text-shadow: var(--glow);
+}
+
+.logout {
+    margin-top: auto;
 }

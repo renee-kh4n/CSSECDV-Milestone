@@ -3,6 +3,8 @@ const multer = require('multer');
 const rateLimit = require('express-rate-limit');
 
 const authController = require('../controllers/authController');
+const validate = require('../middlewares/validate.middleware');
+const { registerSchema, loginSchema } = require('../validators/authSchemas');
 const { isGuest } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
@@ -20,11 +22,11 @@ const loginLimiter = rateLimit({
 });
 
 router.get('/register', isGuest, authController.showRegisterPage);
-router.post("/register", upload.single("pfp"),  authController.registerUser);
+router.post('/register', upload.single('pfp'), validate(registerSchema, '/register'), authController.registerUser);
 
 router.get('/login', isGuest, authController.showLoginPage);
-router.post('/login', loginLimiter, authController.loginUser);
+router.post('/login', loginLimiter, validate(loginSchema, '/login'), authController.loginUser);
 
-router.get('/logout', authController.logoutUser);
+router.post('/logout', authController.logoutUser);
 
 module.exports = router;

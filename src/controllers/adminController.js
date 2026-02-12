@@ -11,9 +11,9 @@ exports.showAdminDashboard = async (req, res) => {
             pfp: u.pfp || '',
             role: u.role
         }));
-        res.render('admin', { title: 'Admin Dashboard', users });
+        return res.render('admin', { title: 'Admin Dashboard', users });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        return res.status(500).send('Server error');
     }
 };

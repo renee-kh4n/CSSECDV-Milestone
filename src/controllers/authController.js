@@ -4,14 +4,12 @@ const userModel = require('../models/userModel');
 
 const supabase = require('../supabase');
 
-const { z } = require('zod');
-
 exports.showLoginPage = (req, res) => {
-    res.render('login', { title: 'Login' });
+    res.render('login', { title: 'Login'});
 };
 
 exports.showRegisterPage = (req, res) => {
-    res.render('register', { title: 'Register' });
+    res.render('register', { title: 'Register'});
 };
 
 const registerSchema = z.object({
@@ -32,44 +30,36 @@ const registerSchema = z.object({
 
 exports.registerUser = async (req, res) => {
     try {
-        const result = registerSchema.safeParse(req.body);
-        
-        if (!result.success) {
-            req.flash('error', result.error.issues[0].message);
-            return res.status(400).redirect('/register');
-        }
-
         const { firstName, lastName, email, phoneNumber, password } = result.data;
 
         if (!req.file) {
-            req.flash('error', 'No image uploaded');
-            return res.status(400).redirect('/register');
+            req.session.errorMessage = 'No image uploaded';
+            return res.redirect('/register');
         }
 
         const userAlreadyExists = await userModel.userExists(email);
         if (userAlreadyExists) {
-            req.flash('error', 'User with this email already exists!');
-            return res.status(400).redirect('/register');
+            req.session.errorMessage = 'Invalid credentials';
+            return res.redirect('/register');
         }
 
         const { fileTypeFromBuffer } = await import('file-type');
         const type = await fileTypeFromBuffer(req.file.buffer);
         if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
-            req.flash('error', 'Invalid file type. Only JPG and PNG are allowed.');
-            return res.status(400).redirect('/register');
+            req.session.errorMessage = 'Invalid file type. Only JPG and PNG are allowed.';
+            return res.redirect('/register');
         }
 
         const salt = crypto.randomBytes(16).toString('hex');
-        const passwordHash = crypto.pbkdf2Sync(password, salt, 4096, 64, 'sha512').toString('hex');
+        const passwordHash = crypto.pbkdf2Sync(password, salt, 210000, 64, 'sha512').toString('hex');
 
         const fileExt = type.ext;
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
         const { data, error } = await supabase.storage.from('pfp').upload(fileName, req.file.buffer, { contentType: type.mime });
 
         if (error) {
-            console.error(error);
-            req.flash('error', 'Server error');
-            return res.status(500).redirect('/register');
+            req.session.errorMessage = 'Server error';
+            return res.redirect('/register');
         }
 
         const { data: publicUrlData } = supabase.storage.from('pfp').getPublicUrl(fileName);
@@ -80,44 +70,29 @@ exports.registerUser = async (req, res) => {
         return res.redirect('/login');
 
     } catch (err) {
-        console.error(err);
-        req.flash('error', 'Server error');
-        return res.status(500).redirect('/register');
+        req.session.errorMessage = 'Server error';
+        return res.redirect('/register');
     }
-};
-
-const loginSchema = z.object({
-    email: z.string().email().trim().toLowerCase(),
-    password: z.string()
-        .min(8)
-        .regex(/[0-9]/)
-        .regex(/[^a-zA-Z0-9]/)
-});
+};  
 
 exports.loginUser = async (req, res) => {
     try {
-        const result = loginSchema.safeParse(req.body);
-
-        if (!result.success) {
-            req.flash('error', 'Invalid credentials');
-            return res.status(400).redirect('/login');
-        }
-
         const { email, password } = result.data;
 
         const user = await userModel.getUserByEmail(email);
 
         if (!user) {
-            req.flash('error', 'Invalid credentials');
-            return res.status(400).redirect('/login');
+            req.session.errorMessage = 'Invalid credentials';
+            return res.redirect('/login');
         }
 
         const { password: storedPasswordHash, salt } = user;
-        const inputPasswordHash = crypto.pbkdf2Sync(password, salt, 4096, 64, 'sha512').toString('hex');
+        const inputPasswordHash = crypto.pbkdf2Sync(password, salt, 210000, 64, 'sha512').toString('hex');
 
         if (inputPasswordHash === storedPasswordHash) {
             req.session.user = {
-                role: user.role
+                role: user.role,
+                email: email
             };
             
             if (user.role === 'admin') {
@@ -126,12 +101,12 @@ exports.loginUser = async (req, res) => {
                 return res.redirect('/home');
             }
         } else {
-            req.flash('error', 'Invalid credentials');
-            return res.status(400).redirect('/login');
+            req.session.errorMessage = 'Invalid credentials';
+            return res.redirect('/login');
         }
     } catch (err) {
-        req.flash('error', 'Server error');
-        return res.status(500).redirect('/login');
+        req.session.errorMessage = 'Server error';
+        return res.redirect('/login');
     }
 };
 

@@ -10,7 +10,9 @@
             <label>Password: </label>
             <input type="password" name="password" minlength="8" required {{#if disabled}}disabled{{/if}}>
         </div>
-        <p class="error-message" id="error-login">{{errorMessage}}</p>
+        {{#if errorMessage}}
+            <p class="error-message" id="error-login">{{errorMessage}}</p>
+        {{/if}}
         <button class="submit-btn" type="submit" {{#if disabled}}disabled{{/if}}>Login</button>
     </form>
     <p class="form-switch">

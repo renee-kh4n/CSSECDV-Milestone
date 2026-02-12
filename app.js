@@ -31,7 +31,7 @@ app.use(
         crossOriginEmbedderPolicy: { policy: 'require-corp' },
         contentSecurityPolicy: {
             directives: {
-                imgSrc: ["'self'", "https://aencmgoursnonycqfbjd.supabase.co"],
+                imgSrc: ["'self'", 'https://aencmgoursnonycqfbjd.supabase.co'],
             },
         },
     }),
@@ -61,7 +61,9 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use((req, res, next) => {
-    res.locals.errorMessage = req.flash('error');
+    res.locals.user = req.session.user || null;
+    res.locals.errorMessage = req.session.errorMessage || null;
+    delete req.session.errorMessage;
     next();
 });
 

@@ -16,6 +16,4 @@ Requirements:
 5. Must be SQL based
 
 Install dependencies:  
-npm init -y  
-npm i express express-handlebars body-parser zod express-session connect-flash
-npm pg bcrypt
+npm install

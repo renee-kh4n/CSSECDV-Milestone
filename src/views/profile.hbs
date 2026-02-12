@@ -1,3 +1,11 @@
 <div class="container">
     <h2>Profile</h2>
+    <img src="{{user.pfp}}" class="pfp" crossorigin>
+    <div class="profile-info">
+        <p><strong>First Name:</strong> {{user.firstName}}</p>
+        <p><strong>Last Name:</strong> {{user.lastName}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        <p><strong>Phone Number:</strong> +63{{user.phoneNumber}}</p>
+        <p><strong>Role:</strong> {{user.role}}</p>
+    </div>
 </div>

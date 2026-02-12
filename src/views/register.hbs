@@ -30,7 +30,9 @@
                 title="Password must be at least 8 characters and include a letter, a number, and a special character."
                 required>
         </div>
-        <p class="error-message" id="error-register">{{errorMessage}}</p>
+        {{#if errorMessage}}
+            <p class="error-message" id="error-register">{{errorMessage}}</p>
+        {{/if}}
         <button class="submit-btn" type="submit">Register</button>
     </form>
     <p class="form-switch">

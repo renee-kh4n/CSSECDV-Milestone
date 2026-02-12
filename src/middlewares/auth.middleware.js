@@ -8,7 +8,7 @@ function isAdmin(req, res, next) {
 
 function isLoggedin(req, res, next) {
     if (req.session.user) {
-        res.set("Cache-Control", "no-store");
+        res.set('Cache-Control', 'no-store');
         return next();
     } else {
         return res.redirect('/login');
