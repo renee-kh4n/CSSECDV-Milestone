@@ -18,8 +18,10 @@ function isLoggedin(req, res, next) {
 function isGuest(req, res, next) {
     if (req.session.user) {
         return res.redirect('/profile');
+    } else {
+        res.set('Cache-Control', 'no-store');
+        return next();
     }
-    next();
 }
 
 module.exports = {

@@ -17,3 +17,4 @@ Requirements:
 
 Install dependencies:  
 npm install
+npm run start
