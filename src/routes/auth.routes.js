@@ -12,12 +12,14 @@ const upload = multer();
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5,               
+    max: 4,               
     handler: (req, res) => {
-        req.session.errorMessage = 'Too many login attempts. Please wait 15 minutes before trying again'
-        return res.status(429).render('login', {
-            disabled: true
-        });
+        req.session.rateLimited = true;
+        setTimeout(() => {
+            req.session.rateLimited = false;
+            req.session.save();
+        }, 15 * 60 * 1000);
+        return res.redirect('/limit');
     }
 });
 

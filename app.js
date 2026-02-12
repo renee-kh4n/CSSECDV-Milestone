@@ -5,8 +5,9 @@ const PgSession = require('connect-pg-simple')(session);
 const exphbs = require('express-handlebars');
 const helmet = require('helmet');
 const path = require('path');
-const pool = require('./src/db');
+const rateLimit = require('express-rate-limit');
 
+const pool = require('./src/db');
 const routes = require('./src/routes/index')
 
 const app = express();
@@ -56,6 +57,20 @@ app.use(session({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
+
+app.use((req, res, next) => {
+    if (req.session.rateLimited && req.path !== '/limit') {
+        return res.redirect('/limit');
+    }
+    next();
+});
+
+app.get('/limit', (req, res) => {
+    if (!req.session.rateLimited) {
+        return res.redirect('/');
+    }
+    res.render('limit');
+});
 
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
