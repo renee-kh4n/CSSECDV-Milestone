@@ -17,7 +17,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
     email: z.email('Invalid credentials').trim().toLowerCase(),
-    password: z.string().min(8).regex(/[0-9]/, 'Invalid credentials').regex(/[^a-zA-Z0-9]/, 'Invalid credentials')
+    password: z.string().regex(/[0-9]/, 'Invalid credentials').regex(/[^a-zA-Z0-9]/, 'Invalid credentials')
 });
 
 module.exports = { registerSchema, loginSchema };

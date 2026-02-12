@@ -8,7 +8,8 @@
 
         <div class="form-input">
             <label>Password: </label>
-            <input type="password" name="password" minlength="8" required {{#if disabled}}disabled{{/if}}>
+            {{!-- <input type="password" name="password" minlength="8" required {{#if disabled}}disabled{{/if}}> --}}
+            <input type="password" name="password" required {{#if disabled}}disabled{{/if}}>
         </div>
         {{#if errorMessage}}
             <p class="error-message" id="error-login">{{errorMessage}}</p>
