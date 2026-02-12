@@ -8,7 +8,7 @@ const registerSchema = z.object({
         .regex(/^[A-Za-z\s'-]+$/, 'Last name must only contain letters, spaces, hyphens, and apostrophes')
         .regex(/^(?!.*\s{2,}).*$/, "First name cannot contain multiple consecutive spaces"),
     email: z.email('Invalid email format').trim().toLowerCase(),
-    phoneNumber: z.string().trim().min(1).regex(/^9\d{9}$/, 'Enter a valid Philippine phone number'),
+    phoneNumber: z.string().trim().min(1).regex(/^(0\d{10}|\d{10})$/, 'Enter a valid Philippine phone number'),
     password: z.string().min(8, 'Password must be at least 8 characters')
         .regex(/[0-9]/, 'Password must contain at least one number')
         .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
