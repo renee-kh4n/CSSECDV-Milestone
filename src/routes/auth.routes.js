@@ -14,8 +14,8 @@ const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,               
     handler: (req, res) => {
-        return res.status(429).render('login', { 
-            errorMessage: 'Too many login attempts. Please wait 15 minutes before trying again.',
+        req.session.errorMessage = 'Too many login attempts. Please wait 15 minutes before trying again'
+        return res.status(429).render('login', {
             disabled: true
         });
     }

@@ -12,25 +12,9 @@ exports.showRegisterPage = (req, res) => {
     res.render('register', { title: 'Register'});
 };
 
-const registerSchema = z.object({
-    firstName: z.string().min(2, "First name is too short").max(50).trim(),
-    lastName: z.string().min(2, "Last name is too short").max(50).trim(),
-    email: z.string().email({ message: "Invalid email format" }).trim().toLowerCase(),
-    phoneNumber: z.string()
-        .trim()
-        .regex(
-            /^(0\d{10}|\d{10})$/, 
-            "Enter a valid Philippine phone number"
-        ),
-    password: z.string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[0-9]/, "Password must contain at least one number")
-        .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character")
-});
-
 exports.registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, phoneNumber, password } = result.data;
+        const { firstName, lastName, email, phoneNumber, password } = req.data;
 
         if (!req.file) {
             req.session.errorMessage = 'No image uploaded';
@@ -77,7 +61,7 @@ exports.registerUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
     try {
-        const { email, password } = result.data;
+        const { email, password } = req.data;
 
         const user = await userModel.getUserByEmail(email);
 

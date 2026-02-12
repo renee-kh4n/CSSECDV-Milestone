@@ -6,7 +6,6 @@ const exphbs = require('express-handlebars');
 const helmet = require('helmet');
 const path = require('path');
 const pool = require('./src/db');
-const flash = require('connect-flash');
 
 const routes = require('./src/routes/index')
 
@@ -43,18 +42,16 @@ app.use(session({
         pool,
         createTableIfMissing: true,
     }),
-    secret: 'someVerySecretString',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 10 * 60 * 1000
+        maxAge: 60 * 60 * 1000
     }
 }));
-
-app.use(flash());
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
