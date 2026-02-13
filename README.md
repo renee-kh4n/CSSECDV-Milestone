@@ -2,19 +2,25 @@
 
 Requirements:
 1. Registration Screen
-    a. Fullname
-    b. Email
-    c. Phone Number
-    d. Profile photo
+	- Fullname
+	- Email
+	- Phone Number
+	- Profile photo
 2. Login Screen
-3. Administration panel
-4. Security Features discussed in class
-    a. Anti brute-force protection
-    b. password hashing with salting
-    c. input validation
-    d. file upload type detection
-5. Must be SQL based
+3. Administration Panel
+4. Security Features
+	- Anti brute-force protection
+	- Password hashing with salting
+	- Input validation
+	- File upload type detection
+5. Must be SQL-based
 
-Install dependencies:  
-npm install
-npm run start
+### Deployment Instructions:
+1. Run the following command to install the dependencies:
+    ```bash
+    npm install
+    ```
+2. Start the application:
+    ```bash
+    npm run start
+    ```
