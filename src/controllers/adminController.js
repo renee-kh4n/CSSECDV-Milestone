@@ -7,7 +7,7 @@ exports.showAdminDashboard = async (req, res) => {
             firstName: u.first_name,
             lastName: u.last_name,
             email: u.email,
-            phoneNumber: u.phone_number,
+            phoneNumber: u.phone_number.replace(/^0+/, ''),
             pfp: u.pfp || '',
             role: u.role
         }));

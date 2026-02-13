@@ -3,11 +3,14 @@ const userModel = require('../models/userModel');
 exports.showUserProfile = async (req, res) => {
     try {
         const result = await userModel.getUserByEmail(req.session.user.email);
+
+        const phoneNumber = result.phone_number.replace(/^0+/, '');
+        
         const user = {
             firstName: result.first_name,
             lastName: result.last_name,
             email: result.email,
-            phoneNumber: result.phone_number,
+            phoneNumber: phoneNumber,
             pfp: result.pfp || '',
             role: result.role
         };
