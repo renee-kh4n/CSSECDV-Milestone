@@ -17,6 +17,6 @@ exports.showUserProfile = async (req, res) => {
         return res.render('profile', { title: 'User Profile', user});
     } catch (err) {
         console.error(err);
-        return res.status(500).send('Server error');
+        return res.send('Server error');
     }
 };

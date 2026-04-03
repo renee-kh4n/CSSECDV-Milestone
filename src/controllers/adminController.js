@@ -14,6 +14,6 @@ exports.showAdminDashboard = async (req, res) => {
         return res.render('admin', { title: 'Admin Dashboard', users });
     } catch (err) {
         console.error(err);
-        return res.status(500).send('Server error');
+        return res.send('Server error');
     }
 };

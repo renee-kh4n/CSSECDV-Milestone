@@ -32,7 +32,7 @@ body {
 
 body>* {
     width: 100%;
-    max-width: none;     
+    max-width: none;
 }
 
 body::before {
@@ -59,14 +59,15 @@ h2 {
     text-align: center;
 }
 
-.navbar {
+.sidenav {
     background: linear-gradient(90deg, rgba(0, 246, 255, 0.15), rgba(255, 47, 220, 0.15));
     padding: 12px 20px;
     border-bottom: 1px solid rgba(0, 246, 255, 0.4);
     box-shadow: var(--glow);
     width: 20%;
     height: calc(100vh - 100px);
-    display: flex;          /* ADD */
+    display: flex;
+    /* ADD */
 }
 
 nav ul {
@@ -76,10 +77,10 @@ nav ul {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    flex: 1; 
+    flex: 1;
 }
 
-.navbar a {
+.sidenav a {
     color: var(--neon-blue);
     margin-right: 15px;
     text-decoration: none;
@@ -87,7 +88,7 @@ nav ul {
     transition: 0.3s;
 }
 
-.navbar a:hover {
+.sidenav a:hover {
     color: var(--neon-pink);
     text-shadow: var(--glow);
 }
@@ -111,6 +112,9 @@ nav ul {
     border-radius: 10px;
     border: 1px solid rgba(0, 246, 255, 0.3);
     box-shadow: 0 0 25px rgba(0, 246, 255, 0.15), inset 0 0 10px rgba(255, 47, 220, 0.1);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 100px);
 }
 
 .phone-number {
@@ -123,7 +127,8 @@ nav ul {
     margin-bottom: 18px;
 }
 
-input {
+input,
+textarea {
     width: 100%;
     padding: 10px;
     background: #0a0e1e;
@@ -152,7 +157,9 @@ input:focus {
     box-shadow: var(--glow);
 }
 
-button {
+button:not([class]),
+button.accordion-button,
+.submit-btn {
     padding: 12px 18px;
     background: linear-gradient(135deg,
             var(--neon-blue),
@@ -168,7 +175,9 @@ button {
     width: 100%;
 }
 
-button:hover {
+button:not([class]):hover,
+button.accordion-button:hover,
+submit-btn:hover {
     transform: translateY(-2px);
     box-shadow:
         0 0 15px var(--neon-blue),
@@ -234,4 +243,16 @@ button:hover {
 
 .logout {
     margin-top: auto;
+}
+
+.accordion-body {
+    background: linear-gradient(180deg,
+            rgba(17, 22, 42, 0.95),
+            rgba(10, 14, 30, 0.95));
+    color: white;
+}
+
+.scroll {
+    overflow-y: auto;
+    flex: 1;
 }

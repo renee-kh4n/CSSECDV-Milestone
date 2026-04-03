@@ -5,17 +5,21 @@ const PgSession = require('connect-pg-simple')(session);
 const exphbs = require('express-handlebars');
 const helmet = require('helmet');
 const path = require('path');
-const rateLimit = require('express-rate-limit');
 
 const pool = require('./src/db');
 const routes = require('./src/routes/index')
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const hbs = exphbs.create({
     extname: 'hbs',
     helpers: {
-        eq: (a, b) => a === b
+        eq: (a, b) => a === b,
+        inc: function (value) {
+            return value + 1;
+        }
     }
 });
 
@@ -32,13 +36,14 @@ app.use(
         contentSecurityPolicy: {
             directives: {
                 imgSrc: ["'self'", 'https://aencmgoursnonycqfbjd.supabase.co'],
+                scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
             },
         },
     }),
 );
 
 app.use(session({
-    name: 'cssecdv.id',
+    name: 'id',
     store: new PgSession({
         pool,
         createTableIfMissing: true,

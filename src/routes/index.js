@@ -5,10 +5,12 @@ const { isLoggedin } = require('../middlewares/auth.middleware');
 const authRoutes = require('./auth.routes');
 const userRoutes = require('./user.routes');
 const adminRoutes = require('./admin.routes');
+const faqRoutes = require('./faq.routes');
 
 router.use(authRoutes);
 router.use(userRoutes);
 router.use(adminRoutes);
+router.use(faqRoutes);
 
 router.get('/', isLoggedin, (req, res) => {
     return res.redirect('/profile');

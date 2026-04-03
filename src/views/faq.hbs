@@ -1,0 +1,35 @@
+<div class="container">
+    <h2>{{title}}</h2>
+    <div class="scroll">
+        <div class="accordion" id="faqAccordion">
+            {{#each faqs}}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{this.id}}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{this.id}}" aria-expanded="false" aria-controls="collapse{{this.id}}">
+                        {{inc @index}}. {{this.question}}
+                    </button>
+                </h2>
+                <div id="collapse{{this.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{this.id}}"
+                    data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>{{this.answer}}</p>
+
+                        {{#if ../isAdmin}}
+                        <a href="/faq/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="/faq/delete/{{this.id}}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{#if isAdmin}}
+    <div class="text-center mt-3">
+        <a href="/faq/create" class="btn btn-primary mb-3">Create New FAQ</a>
+    </div>
+    {{/if}}
+</div>
