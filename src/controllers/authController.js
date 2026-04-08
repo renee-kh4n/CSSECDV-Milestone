@@ -76,7 +76,7 @@ exports.loginUser = async (req, res) => {
         if (inputPasswordHash === storedPasswordHash) {
             req.session.user = {
                 role: user.role,
-                email: email
+                id: user.user_id
             };
             
             if (user.role === 'admin') {
