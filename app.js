@@ -8,6 +8,7 @@ const path = require('path');
 
 const pool = require('./src/db');
 const routes = require('./src/routes/index')
+const timeout = require('./src/middlewares/timeout.middleware');
 
 const app = express();
 
@@ -58,6 +59,8 @@ app.use(session({
         maxAge: 60 * 60 * 1000
     }
 }));
+
+app.use(timeout);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
