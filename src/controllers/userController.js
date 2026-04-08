@@ -2,7 +2,7 @@ const userModel = require('../models/userModel');
 
 exports.showUserProfile = async (req, res) => {
     try {
-        const result = await userModel.getUserByEmail(req.session.user.email);
+        const result = await userModel.getUserById(req.session.user.id);
 
         const phoneNumber = result.phone_number.replace(/^0+/, '');
         
