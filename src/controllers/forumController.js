@@ -189,7 +189,6 @@ exports.showCreateComment = async (req, res) => {
 exports.showEditCommentForm = async (req, res) => {
     const commentId = req.params.id;
     const userId = req.session.user.id;
-    console.log('am i in');
     try {
         const comment = await commentModel.getCommentByID(commentId);
         if (!comment) return res.status(404).send('Comment not found');
