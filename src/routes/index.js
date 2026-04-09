@@ -6,7 +6,6 @@ const authRoutes = require('./auth.routes');
 const userRoutes = require('./user.routes');
 const adminRoutes = require('./admin.routes');
 const faqRoutes = require('./faq.routes');
-// const forumRoutes = require('./forum.routes');
 const chipRoutes = require('./chip.routes');
 const subChipRoutes = require('./subChip.routes');
 
@@ -14,7 +13,6 @@ router.use(authRoutes);
 router.use(userRoutes);
 router.use(adminRoutes);
 router.use(faqRoutes);
-// router.use(forumRoutes);
 router.use(chipRoutes);
 router.use(subChipRoutes);
 
