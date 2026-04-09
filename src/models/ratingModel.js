@@ -43,7 +43,27 @@ const getRatingsForUserAndPosts = async (userId, postIds) => {
     return result.rows;
 };
 
+const getAverageRatingsForPosts = async (postIds) => {
+    if (!postIds || postIds.length === 0) return [];
+
+    const result = await pool.query(
+        `
+        SELECT
+            post_id,
+            ROUND(AVG(rating)::numeric, 1) AS average_rating,
+            COUNT(*)::int AS rating_count
+        FROM ratings
+        WHERE post_id = ANY($1::int[])
+        GROUP BY post_id
+        `,
+        [postIds]
+    );
+
+    return result.rows;
+};
+
 module.exports = {
     upsertRating,
     getRatingsForUserAndPosts,
+    getAverageRatingsForPosts,
 };

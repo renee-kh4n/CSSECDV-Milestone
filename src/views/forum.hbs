@@ -23,6 +23,14 @@
                 </p>
 
                 <p class="mb-2">{{this.description}}</p>
+                <p class="text-muted mb-2">
+                    Average rating:
+                    {{#if this.ratingCount}}
+                        {{this.averageRating}}/5 ({{this.ratingCount}} rating{{#unless (eq this.ratingCount 1)}}s{{/unless}})
+                    {{else}}
+                        No ratings yet
+                    {{/if}}
+                </p>
 
                 {{#if this.isOwner}}
                 <a href="/forum/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>

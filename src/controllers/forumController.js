@@ -8,6 +8,19 @@ exports.getAllPosts = async (req, res) => {
         const posts = await postModel.getAllPosts();
         const userId = req.session?.user?.id;
         let ratingsByPostId = {};
+        let averageRatingsByPostId = {};
+
+        if (posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const averageRatings = await ratingModel.getAverageRatingsForPosts(postIds);
+            averageRatingsByPostId = averageRatings.reduce((acc, row) => {
+                acc[row.post_id] = {
+                    averageRating: Number(row.average_rating),
+                    ratingCount: Number(row.rating_count)
+                };
+                return acc;
+            }, {});
+        }
 
         if (userId && posts.length > 0) {
             const postIds = posts.map((post) => post.id);
@@ -40,6 +53,8 @@ exports.getAllPosts = async (req, res) => {
                     ...post,
                     isOwner: userId && post.user_id === userId,
                     userRating: ratingsByPostId[post.id] || null,
+                    averageRating: averageRatingsByPostId[post.id]?.averageRating || null,
+                    ratingCount: averageRatingsByPostId[post.id]?.ratingCount || 0,
                     datetime: new Date(post.created_at).toLocaleString('en-US', {
                         weekday: 'short',
                         year: 'numeric',
@@ -57,8 +72,7 @@ exports.getAllPosts = async (req, res) => {
         return res.render('forum', { title: 'Forum', posts: updatedPosts });
     } catch (err) {
         console.error(err);
-        req.session.errorMessage = 'Unable to save rating right now.';
-        return res.redirect('/forum');
+        return res.send('Server error');
     }
 };
 
