@@ -1,0 +1,24 @@
+<div class='container'>
+    <h2>{{#if comment.id}}Edit Comment{{else}}Add Comment{{/if}}</h2>
+    <form action="/forum/{{postId}}/{{#if comment.id}}edit/{{comment.id}}{{else}}create{{/if}}" method="POST">
+        <div>
+            <label for="content">Content</label>
+            <textarea name="content" rows="4" required>{{comment.content}}</textarea>
+        </div>
+        <br>
+        <div class="text-center">
+            <button type="submit" class='btn btn-primary'>{{#if comment.id}}Update Comment{{else}}Add Comment{{/if}}</button>
+        </div>
+    </form>
+    {{#if comment.id}}
+    <form action="/forum/{{postId}}/delete/{{comment.id}}" method="POST">
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-danger">Delete Comment</button>
+        </div>
+    </form>
+    {{/if}}
+
+    {{#if errorMessage}}
+    <p class="error-message" id="error-login">{{errorMessage}}</p>
+    {{/if}}
+</div>

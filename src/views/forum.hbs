@@ -30,6 +30,39 @@
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
                 {{/if}}
+
+                <hr>
+
+                <h6 class="mt-3">Comments</h6>
+
+                {{#if this.comments.length}}
+                    {{#each this.comments}}
+                    <div class="comment-card border rounded p-2 mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{this.pfp}}" class="pfp" crossorigin>
+
+                            <div>
+                                <h6 class="mb-0">{{this.first_name}} {{this.last_name}}</h6>
+                                <small class="text-muted">{{this.datetime}}</small>
+                            </div>
+                        </div>
+
+                        <p class="mb-2 mt-2">{{this.content}}</p>
+
+                        {{#if this.isOwner}}
+                        <a href="/forum/{{this.post_id}}/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="/forum/{{this.post_id}}/delete/{{this.id}}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                {{else}}
+                    <p class="text-muted">No comments yet.</p>
+                {{/if}}
+                <a href="/forum/{{this.id}}/create" class="btn btn-primary btn-sm mt-2">
+                    Add Comment
+                </a>
             </div>
         </div>
         {{/each}}

@@ -1,11 +1,14 @@
 function validateID(req, res, next) {
-  const id = Number(req.params.id);
+  for (const key in req.params) {
+    const value = Number(req.params[key]);
 
-  if (!Number.isInteger(id) || id <= 0) {
-    return res.send('Invalid FAQ ID');
+    if (!Number.isInteger(value) || value <= 0) {
+      return res.status(400).send(`Invalid ${key}`);
+    }
+
+    req.params[key] = value;
   }
 
-  req.params.id = id;
   next();
 }
 
