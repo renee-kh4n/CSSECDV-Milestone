@@ -1,10 +1,12 @@
 const { date } = require('zod');
 const postModel = require('../models/postModel');
+const subChipModel = require('../models/subChipModel');
 
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await postModel.getAllPosts();
         const userId = req.session?.user?.id;
+        const subChip = req.params.subChip;
 
         const updatedPosts = posts.map(post => ({
             ...post,
@@ -19,7 +21,7 @@ exports.getAllPosts = async (req, res) => {
                 hour12: false
             })
         }));
-        return res.render('forum', { title: 'Forum', posts: updatedPosts });
+        return res.render(`subChip`, { title: subChip, posts: updatedPosts });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -27,8 +29,9 @@ exports.getAllPosts = async (req, res) => {
 };
 
 exports.showCreatePost = async (req, res) => {
-    try {
-        return res.render('editPost', { title: 'Create Post', post: {} });
+    const subChipTitle = req.params.subChip;
+    try {         
+        return res.render('editPost', { title: 'Create Post', subChipTitle, post: {} });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -37,13 +40,13 @@ exports.showCreatePost = async (req, res) => {
 
 exports.showEditPostForm = async (req, res) => {
     const postId = req.params.id;
-
+    const subChipTitle = req.params.subChip;
     try {
         const post = await postModel.getPostByID(postId);
         if (!post) {
             return res.send('Post not found');
         }
-        return res.render('editPost', { title: 'Edit Post', post });
+        return res.render('editPost', { title: 'Edit Post', subChipTitle, post });
     } catch (err) {
         console.error(err);
         return res.send('Server error');

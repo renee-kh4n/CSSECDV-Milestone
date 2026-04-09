@@ -1,6 +1,6 @@
 <div class='container'>
     <h2>{{#if post.id}}Edit Post{{else}}Create Post{{/if}}</h2>
-    <form action="/forum/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST">
+    <form action="/chip/{{subChipTitle}}/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST">
         <div>
             <label for="content">Content</label>
             <textarea name="content" rows="4" required>{{post.content}}</textarea>
@@ -11,7 +11,7 @@
         </div>
     </form>
     {{#if post.id}}
-    <form action="/forum/delete/{{post.id}}" method="POST">
+    <form action="/chip/{{subChipTitle}}/delete/{{post.id}}" method="POST">
         <div class="text-center mt-3">
             <button type="submit" class="btn btn-danger">Delete Post</button>
         </div>
