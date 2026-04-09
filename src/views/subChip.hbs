@@ -39,18 +39,20 @@
                 </form>
                 {{else}}
                 <form method="POST" action="/chip/{{../subchip_id}}/rating/{{this.id}}">
-                <div class="rating">
-                    <input type="radio" name="rating" value="5" id="star5-{{this.id}}" {{#if (eq this.userRating 5)}}checked{{/if}}><label for="star5-{{this.id}}" title="5 stars"></label>
-
-                    <input type="radio" name="rating" value="4" id="star4-{{this.id}}" {{#if (eq this.userRating 4)}}checked{{/if}}><label for="star4-{{this.id}}" title="4 stars" ></label>
-
-                    <input type="radio" name="rating" value="3" id="star3-{{this.id}}" {{#if (eq this.userRating 3)}}checked{{/if}}><label for="star3-{{this.id}}" title="3 stars"></label>
-
-                    <input type="radio" name="rating" value="2" id="star2-{{this.id}}" {{#if (eq this.userRating 2)}}checked{{/if}}><label for="star2-{{this.id}}" title="2 stars"></label>
-
-                    <input type="radio" name="rating" value="1" id="star1-{{this.id}}" {{#if (eq this.userRating 1)}}checked{{/if}}><label for="star1-{{this.id}}" title="1 star"></label>
-                </div>
-
+                    <div class="rating-input-row">
+                        <input
+                            type="number"
+                            name="rating"
+                            min="1"
+                            max="5"
+                            step="1"
+                            value="{{#if this.userRating}}{{this.userRating}}{{else}}1{{/if}}"
+                            class="rating-number-input"
+                            required
+                        >
+                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                        <span class="rating-stars-view" data-rating="{{this.userRating}}">★★★★★</span>
+                    </div>
                 </form>
                 {{/if}}
 

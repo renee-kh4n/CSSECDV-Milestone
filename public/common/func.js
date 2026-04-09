@@ -6,14 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	const ratingInputs = document.querySelectorAll(
-		'form[action*="/rating/"] input[type="radio"][name="rating"]'
-	);
-	ratingInputs.forEach((input) => {
-		input.addEventListener('change', () => {
-			if (input.form) {
-				input.form.submit();
-			}
-		});
+	const ratingStars = document.querySelectorAll('.rating-stars-view');
+	ratingStars.forEach((starElement) => {
+		const ratingValue = Number(starElement.dataset.rating || 0);
+		const clampedRating = Math.max(0, Math.min(5, ratingValue));
+		const fillPercentage = (clampedRating / 5) * 100;
+		starElement.style.setProperty('--fill-percentage', `${fillPercentage}%`);
 	});
 });
