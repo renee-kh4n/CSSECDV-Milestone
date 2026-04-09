@@ -306,3 +306,36 @@ submit-btn:hover {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.rating {
+  display: inline-block;
+  direction: rtl;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+  position: relative;
+}
+
+.rating label:before {
+  content: "★";
+}
+
+.rating label.half:before {
+  content: "★";
+  position: absolute;
+  width: 50%;
+  overflow: hidden;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+  color: #ffc107;
+}

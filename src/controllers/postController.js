@@ -1,15 +1,27 @@
 const { date } = require('zod');
 const postModel = require('../models/postModel');
+const ratingModel = require('../models/ratingModel');
 const supabase = require('../supabase');
 
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await postModel.getAllPosts();
         const userId = req.session?.user?.id;
+        let ratingsByPostId = {};
+
+        if (userId && posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const ratings = await ratingModel.getRatingsForUserAndPosts(userId, postIds);
+            ratingsByPostId = ratings.reduce((acc, row) => {
+                acc[row.post_id] = row.rating;
+                return acc;
+            }, {});
+        }
 
         const updatedPosts = posts.map(post => ({
             ...post,
             isOwner: userId && post.user_id === userId,
+            userRating: ratingsByPostId[post.id] || null,
             datetime: new Date(post.created_at).toLocaleString('en-US', {
                 weekday: 'short',
                 year: 'numeric',
@@ -148,6 +160,29 @@ exports.deletePost = async (req, res) => {
         const deleted = await postModel.deletePost(postId, userId);
         if (!deleted) return res.status(403).send('Forbidden');
 
+        return res.redirect('/forum');
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.submitRating = async (req, res) => {
+    const postId = Number(req.params.id);
+    const userId = req.session?.user?.id;
+    const rating = Number(req.body.rating);
+
+    try {
+        if (!userId) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        if (!Number.isInteger(postId) || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+            req.session.errorMessage = 'Invalid rating value';
+            return res.redirect('/forum');
+        }
+
+        await ratingModel.upsertRating(postId, userId, rating);
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);

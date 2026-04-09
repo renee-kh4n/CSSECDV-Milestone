@@ -18,5 +18,6 @@ router.post('/forum/create', isLoggedin, isNotBanned, upload.single('image'), va
 router.get('/forum/edit/:id', isLoggedin, isNotBanned, validateID, postController.showEditPostForm);
 router.post('/forum/edit/:id', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, (req) => `/forum/edit/${req.params.id}`), postController.updatePost);
 router.post('/forum/delete/:id', isLoggedin, isNotBanned, validateID, postController.deletePost);
+router.post('/forum/rating/:id', isLoggedin, isNotBanned, validateID, postController.submitRating);
 
 module.exports = router;
