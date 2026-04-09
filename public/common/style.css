@@ -339,3 +339,17 @@ submit-btn:hover {
 .rating label:hover ~ label {
   color: #ffc107;
 }
+
+custom-card {
+    cursor: pointer;
+    gap: 20px;
+}
+
+custom-chip {
+    color: inherit;
+    flex: 1;
+}
+
+.posts {
+    height: 50px;
+}
