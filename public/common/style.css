@@ -22,12 +22,13 @@ body {
     background: radial-gradient(circle at top, #141a3a, #05070f);
     color: var(--text-main);
     min-height: 100vh;
-    padding: 50px;
+    padding: 24px;
     display: flex;
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
     margin: 0;
+    gap: 20px;
 }
 
 body>* {
@@ -57,6 +58,9 @@ body::before {
 
 h2 {
     text-align: center;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .sidenav {
@@ -64,10 +68,13 @@ h2 {
     padding: 12px 20px;
     border-bottom: 1px solid rgba(0, 246, 255, 0.4);
     box-shadow: var(--glow);
-    width: 20%;
-    height: calc(100vh - 100px);
+    width: 260px;
+    min-width: 220px;
+    height: calc(100vh - 48px);
     display: flex;
-    /* ADD */
+    border-radius: 12px;
+    position: sticky;
+    top: 24px;
 }
 
 nav ul {
@@ -82,15 +89,19 @@ nav ul {
 
 .sidenav a {
     color: var(--neon-blue);
-    margin-right: 15px;
+    margin-right: 0;
     text-decoration: none;
     letter-spacing: 1px;
     transition: 0.3s;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
 }
 
 .sidenav a:hover {
     color: var(--neon-pink);
     text-shadow: var(--glow);
+    background: rgba(255, 47, 220, 0.08);
 }
 
 .container-forms {
@@ -106,7 +117,7 @@ nav ul {
 
 .container {
     width: 100%;
-    margin: 0 50px;
+    margin: 0;
     background: linear-gradient(180deg, rgba(17, 22, 42, 0.95), rgba(10, 14, 30, 0.95));
     padding: 25px;
     border-radius: 10px;
@@ -138,6 +149,7 @@ textarea {
     outline: none;
     transition: 0.3s;
     font-family: 'Orbitron';
+    font-size: 0.95rem;
 }
 
 #countryCode {
@@ -173,6 +185,7 @@ button.accordion-button,
     box-shadow: var(--glow);
     transition: 0.3s;
     width: 100%;
+    text-transform: uppercase;
 }
 
 button:not([class]):hover,
@@ -224,8 +237,13 @@ submit-btn:hover {
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    padding: 50px;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 24px;
+    border: 1px solid rgba(0, 246, 255, 0.25);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    background: rgba(11, 15, 26, 0.45);
 }
 
 .pfp1 {
@@ -242,6 +260,12 @@ submit-btn:hover {
     border-radius: 50%;
     border: 2px solid var(--neon-blue);
     box-shadow: var(--glow);
+}
+
+.profile .pfp {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
 }
 
 .form-switch {
@@ -275,6 +299,7 @@ submit-btn:hover {
 .scroll {
     overflow-y: auto;
     flex: 1;
+    padding-right: 6px;
 }
 
 .ban-search {
@@ -417,4 +442,96 @@ custom-chip {
 
 .profile-view-link:hover {
     color: var(--neon-pink);
+}
+
+.card {
+    background: rgba(11, 15, 26, 0.65);
+    border: 1px solid rgba(0, 246, 255, 0.25);
+    border-radius: 12px;
+    color: var(--text-main);
+}
+
+.text-muted {
+    color: #9fb5d8 !important;
+}
+
+.btn {
+    border-radius: 8px;
+    letter-spacing: 0.4px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    border: none;
+    color: #05070f;
+}
+
+.btn-primary:hover {
+    box-shadow: var(--glow);
+    filter: brightness(1.05);
+}
+
+.btn-warning,
+.btn-danger {
+    border: none;
+}
+
+.admin-table td img.pfp {
+    width: 60px;
+    height: 60px;
+}
+
+.admin-table td,
+.admin-table th {
+    vertical-align: middle;
+}
+
+.container a:not(.btn) {
+    color: var(--neon-blue);
+}
+
+.container a:not(.btn):hover {
+    color: var(--neon-pink);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(11, 15, 26, 0.7);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--neon-blue), var(--neon-purple));
+    border-radius: 8px;
+}
+
+@media (max-width: 992px) {
+    body {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .sidenav {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        position: static;
+        border-radius: 10px;
+    }
+
+    nav ul {
+        gap: 8px;
+    }
+
+    .container {
+        max-height: none;
+    }
+
+    .profile {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
 }
