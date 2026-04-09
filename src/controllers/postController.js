@@ -31,10 +31,38 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
-exports.showCreatePost = async (req, res) => {
-    const subChipID = req.params.subChipID;
+exports.getAllPostsFromSubChip = async (req, res) => {
     try {
-        return res.render('editPost', { title: 'Create Post', subChipID, post: {} });
+        const subchip_id = req.params.subChipID;
+        const posts = await postModel.getAllPostsFromSubChip(subchip_id);
+        const userId = req.session?.user?.id;
+
+        const subChip = await subChipModel.getSubChipByID(subchip_id);
+
+        const updatedPosts = posts.map(post => ({
+            ...post,
+            isOwner: userId && post.user_id === userId,
+            datetime: new Date(post.created_at).toLocaleString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+        }));
+        return res.render(`subChip`, { title: subChip.title, subchip_id, posts: updatedPosts });
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.showCreatePost = async (req, res) => {
+    const subchip_id = req.params.subChipID;
+    try {
+        return res.render('editPost', { title: 'Create Post', subchip_id, post: {} });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -47,7 +75,6 @@ exports.showEditPostForm = async (req, res) => {
     const subchip_id = req.params.subChipID;
 
     try {
-        console.log(`Fetching post with ID: ${postId} for user ID: ${userId}`);
         const post = await postModel.getPostByID(postId);
         if (!post) return res.status(404).send('Post not found');
         if (post.user_id !== userId) return res.status(403).send('Forbidden');
@@ -73,7 +100,7 @@ exports.createPost = async (req, res) => {
 
             if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
                 req.session.errorMessage = 'Invalid file type. Only JPG and PNG are allowed.';
-                return res.redirect(`/chip/${subChip}/create`);
+                return res.redirect(`/chip/${subchip_id}/create`);
             }
 
             const fileName = `${Date.now()}-${Math.random()}.${type.ext}`;
@@ -85,7 +112,7 @@ exports.createPost = async (req, res) => {
             if (error) {
                 console.error('Supabase upload error:', error);
                 req.session.errorMessage = 'Image upload failed';
-                return res.redirect(`/chip/${subChip}/create`);
+                return res.redirect(`/chip/${subchip_id}/create`);
             }
 
             const { data: publicUrlData } = supabase.storage
@@ -94,8 +121,7 @@ exports.createPost = async (req, res) => {
 
             imageUrl = publicUrlData.publicUrl;
         }
-
-        await postModel.createPost(userId, description, price, imageUrl);
+        await postModel.createPost(userId, subchip_id, description, price, imageUrl);
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         console.error(err);

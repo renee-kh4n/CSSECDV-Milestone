@@ -10,7 +10,7 @@ const { isLoggedin, isNotBanned} = require('../middlewares/auth.middleware');
 const router = express.Router();
 const upload = multer();
 
-router.get('/chip/:subChipID', isLoggedin, isNotBanned, validateID, postController.getAllPosts);
+router.get('/chip/:subChipID', isLoggedin, isNotBanned, validateID, postController.getAllPostsFromSubChip);
 
 router.get('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, postController.showCreatePost);
 router.post('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, '/chip/:subChipID/create'), postController.createPost);
