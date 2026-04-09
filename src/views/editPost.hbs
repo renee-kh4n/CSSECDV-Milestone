@@ -1,6 +1,6 @@
 <div class='container'>
     <h2>{{#if post.id}}Edit Post{{else}}Create Post{{/if}}</h2>
-    <form action="/forum/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST" enctype="multipart/form-data">
+    <form action="/chip/{{subchip_id}}/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST" enctype="multipart/form-data">
         {{#if post.image}}
         <div class="mb-2">
             <p>Current Image</p>
@@ -27,7 +27,7 @@
         </div>
     </form>
     {{#if post.id}}
-    <form action="/forum/delete/{{post.id}}" method="POST">
+    <form action="/chip/{{subchip_id}}/delete/{{post.id}}" method="POST">
         <div class="text-center mt-3">
             <button type="submit" class="btn btn-danger">Delete Post</button>
         </div>

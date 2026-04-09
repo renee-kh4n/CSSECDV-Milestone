@@ -25,8 +25,8 @@
                 <p class="mb-2">{{this.description}}</p>
 
                 {{#if this.isOwner}}
-                <a href="/chip/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
-                <form action="/chip/delete/{{this.id}}" method="POST" style="display:inline;">
+                <a href="/chip/{{../subchip_id}}/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
+                <form action="/chip/{{../subchip_id}}/delete/{{this.id}}" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
                 {{/if}}
@@ -36,6 +36,6 @@
     </div>
 
     <div class="text-center mt-3">
-        <a href="/chip/{{title}}/create" class="btn btn-primary">Create New Post</a>
+        <a href="/chip/{{subchip_id}}/create" class="btn btn-primary">Create New Post</a>
     </div>
 </div>
