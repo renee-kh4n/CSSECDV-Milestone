@@ -27,6 +27,20 @@ const upsertRating = async (postId, userId, rating) => {
     return inserted.rows[0];
 };
 
+const deleteRating = async (postId, userId) => {
+    const result = await pool.query(
+        `
+        DELETE FROM ratings
+        WHERE post_id = $1
+          AND user_id = $2
+        RETURNING *
+        `,
+        [postId, userId]
+    );
+
+    return result.rows[0] || null;
+};
+
 const getRatingsForUserAndPosts = async (userId, postIds) => {
     if (!postIds || postIds.length === 0) return [];
 
@@ -87,6 +101,7 @@ const getRatedPostsByUserId = async (userId) => {
 
 module.exports = {
     upsertRating,
+    deleteRating,
     getRatingsForUserAndPosts,
     getAverageRatingsForPosts,
     getRatedPostsByUserId,

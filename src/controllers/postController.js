@@ -368,11 +368,22 @@ exports.submitRating = async (req, res) => {
     const postId = Number(req.params.id);
     const userId = req.session?.user?.id;
     const rating = Number(req.body.rating);
+    const ratingAction = req.body.ratingAction;
     const subchip_id = req.params.subChipID;
 
     try {
         if (!userId) {
             return res.status(401).send('Unauthorized');
+        }
+
+        if (ratingAction === 'clear') {
+            if (!Number.isInteger(postId)) {
+                req.session.errorMessage = 'Invalid post';
+                return res.redirect(`/chip/${subchip_id}`);
+            }
+
+            await ratingModel.deleteRating(postId, userId);
+            return res.redirect(`/chip/${subchip_id}`);
         }
 
         if (!Number.isInteger(postId) || !Number.isInteger(rating) || rating < 1 || rating > 5) {
