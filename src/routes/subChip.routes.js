@@ -16,7 +16,7 @@ router.get('/chip/:subChipID', isLoggedin, isNotBanned, validateID, postControll
 
 // Create Post
 router.get('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, postController.showCreatePost);
-router.post('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, '/chip/:subChipID/create'), postController.createPost);
+router.post('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, (req) => `/chip/${req.params.subChipID}/create`), postController.createPost);
 
 // Edit & Delete Post
 router.get('/chip/:subChipID/edit/:id', isLoggedin, isNotBanned, validateID, postController.showEditPostForm);
