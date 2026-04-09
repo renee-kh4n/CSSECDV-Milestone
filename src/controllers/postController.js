@@ -38,12 +38,13 @@ exports.showCreatePost = async (req, res) => {
 
 exports.showEditPostForm = async (req, res) => {
     const postId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
         const post = await postModel.getPostByID(postId);
-        if (!post) {
-            return res.send('Post not found');
-        }
+        if (!post) return res.status(404).send('Post not found');
+        if (post.user_id !== userId) return res.status(403).send('Forbidden');
+
         return res.render('editPost', { title: 'Edit Post', post });
     } catch (err) {
         console.error(err);
@@ -97,6 +98,7 @@ exports.createPost = async (req, res) => {
 exports.updatePost = async (req, res) => {
     const { description, price } = req.body;
     const postId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
         let imageUrl = null;
@@ -129,7 +131,8 @@ exports.updatePost = async (req, res) => {
             imageUrl = publicUrlData.publicUrl;
         }
 
-        await postModel.updatePost(postId, description, price, imageUrl);
+        const updated = await postModel.updatePost(postId, userId, description, price, imageUrl);
+        if (!updated) return res.status(403).send('Forbidden');
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);
@@ -139,9 +142,12 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
     const postId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
-        await postModel.deletePost(postId);
+        const deleted = await postModel.deletePost(postId, userId);
+        if (!deleted) return res.status(403).send('Forbidden');
+
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);

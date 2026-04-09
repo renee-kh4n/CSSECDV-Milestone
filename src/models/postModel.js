@@ -28,7 +28,7 @@ const getPostByID = async (id) => {
 	return result.rows[0];
 };
 
-const updatePost = async (id, description, price, image) => {
+const updatePost = async (id, userId, description, price, image) => {
     let query;
     let values;
 
@@ -36,28 +36,28 @@ const updatePost = async (id, description, price, image) => {
         query = `
             UPDATE posts
             SET description = $1, price = $2, image = $3
-            WHERE id = $4
+            WHERE id = $4 AND user_id = $5
             RETURNING *
         `;
-        values = [description, price, image, id];
+        values = [description, price, image, id, userId];
     } else {
         query = `
             UPDATE posts
             SET description = $1, price = $2
-            WHERE id = $3
+            WHERE id = $3 AND user_id = $4
             RETURNING *
         `;
-        values = [description, price, id];
+        values = [description, price, id, userId];
     }
 
     const result = await pool.query(query, values);
     return result.rows[0];
 };
 
-const deletePost = async (id) => {
+const deletePost = async (id, userId) => {
 	const result = await pool.query(
-		'DELETE FROM posts WHERE id = $1 RETURNING *',
-		[id],
+		'DELETE FROM posts WHERE id = $1 AND user_id = $2 RETURNING *',
+		[id, userId],
 	);
 	return result.rows[0];
 };
