@@ -1,0 +1,38 @@
+<div class='container'>
+    <h2>{{#if announcement.announcement_id}}Edit Announcement{{else}}Create Announcement{{/if}}</h2>
+
+    <form action="/announcement/{{#if announcement.announcement_id}}edit/{{announcement.announcement_id}}{{else}}create{{/if}}" method="POST">
+        
+        <div>
+            <label for="title">Title</label>
+            <input type="text" name="title" value="{{announcement.title}}" required />
+        </div>
+        <br>
+
+        <div>
+            <label for="content">Content</label><br>
+            <textarea name="content" rows="4" required>{{announcement.content}}</textarea>
+        </div>
+
+        <br>
+
+        <div class="text-center">
+            <button type="submit" class='btn btn-primary'>
+                {{#if announcement.announcement_id}}Update Announcement{{else}}Create Announcement{{/if}}
+            </button>
+        </div>
+
+    </form>
+
+    {{#if announcement.announcement_id}}
+    <form action="/announcement/delete/{{announcement.announcement_id}}" method="POST">
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-danger">Delete Announcement</button>
+        </div>
+    </form>
+    {{/if}}
+
+    {{#if errorMessage}}
+    <p class="error-message" id="error-login">{{errorMessage}}</p>
+    {{/if}}
+</div>
