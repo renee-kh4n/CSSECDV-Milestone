@@ -1,10 +1,10 @@
 const pool = require('../db');
 
-const createPost = async (userId, description, price, image) => {
-	console.log('Creating post with:', { userId, description, price, image });
+const createPost = async (userId, subchip_id, description, price, image) => {
+	console.log('Creating post with:', { userId, subchip_id, description, price, image });
 	const result = await pool.query(
-		'INSERT INTO posts (user_id, description, price, image) VALUES ($1, $2, $3, $4) RETURNING *',
-		[userId, description, price, image]
+		'INSERT INTO posts (user_id, subchip_id, description, price, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+		[userId, subchip_id, description, price, image]
 	);
 	return result.rows[0];
 };
@@ -20,6 +20,21 @@ const getAllPosts = async () => {
 		JOIN users ON posts.user_id = users.user_id
 		ORDER BY posts.created_at DESC
 	`);
+	return result.rows;
+};
+
+const getAllPostsFromSubChip = async (subchip_id) => {
+	const result = await pool.query(`
+		SELECT 
+			posts.*,
+			users.first_name,
+			users.last_name,
+			users.pfp
+		FROM posts
+		JOIN users ON posts.user_id = users.user_id
+		WHERE posts.subchip_id = $1
+		ORDER BY posts.created_at DESC
+	`, [subchip_id]);
 	return result.rows;
 };
 
@@ -62,10 +77,20 @@ const deletePost = async (id, userId) => {
 	return result.rows[0];
 };
 
+const deletePostsBySubChip = async (subchip_id) => {
+    const result = await pool.query(
+        'DELETE FROM posts WHERE subchip_id = $1 RETURNING *',
+        [subchip_id]
+    );
+    return result.rows;
+};
+
 module.exports = {
 	createPost,
 	getAllPosts,
+	getAllPostsFromSubChip,
 	getPostByID,
 	updatePost,
 	deletePost,
+	deletePostsBySubChip,
 };

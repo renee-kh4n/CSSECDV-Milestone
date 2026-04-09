@@ -15,6 +15,6 @@ router.post('/faq/create', isLoggedin, isAdmin, validate(faqSchema, '/faq/create
 
 router.get('/faq/edit/:id', isLoggedin, isAdmin, validateID, faqController.showEditFAQForm,);
 router.post('/faq/edit/:id', isLoggedin, isAdmin, validateID, validate(faqSchema, (req) => `/faq/edit/${req.params.id}`), faqController.updateFAQ);
-router.post('/faq/delete/:id',isLoggedin,isAdmin, validateID,faqController.deleteFAQ,);
+router.post('/faq/delete/:id',isLoggedin, isAdmin, validateID,faqController.deleteFAQ,);
 
 module.exports = router;

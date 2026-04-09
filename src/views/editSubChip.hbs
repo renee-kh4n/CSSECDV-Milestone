@@ -1,0 +1,38 @@
+<div class='container'>
+    <h2>{{#if subChip.subchip_id}}Edit SubChip{{else}}Create SubChip{{/if}}</h2>
+
+    <form action="/chip/{{#if subChip.subchip_id}}edit/{{subChip.subchip_id}}{{else}}create{{/if}}" method="POST">
+        
+        <div>
+            <label for="title">Title</label>
+            <input type="text" name="title" value="{{subChip.title}}" required />
+        </div>
+        <br>
+
+        <div>
+            <label for="description">Description</label><br>
+            <textarea name="description" rows="4" required>{{subChip.description}}</textarea>
+        </div>
+
+        <br>
+
+        <div class="text-center">
+            <button type="submit" class='btn btn-primary'>
+                {{#if subChip.subchip_id}}Update SubChip{{else}}Create SubChip{{/if}}
+            </button>
+        </div>
+
+    </form>
+
+    {{#if subChip.subchip_id}}
+    <form action="/chip/delete/{{subChip.subchip_id}}" method="POST">
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-danger">Delete SubChip</button>
+        </div>
+    </form>
+    {{/if}}
+
+    {{#if errorMessage}}
+    <p class="error-message" id="error-login">{{errorMessage}}</p>
+    {{/if}}
+</div>
