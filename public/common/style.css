@@ -307,37 +307,27 @@ submit-btn:hover {
     cursor: not-allowed;
 }
 
-.rating {
-  display: inline-block;
-  direction: rtl;
+.rating-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.rating input {
-  display: none;
+.rating-number-input {
+    width: 80px;
+    margin: 0;
 }
 
-.rating label {
-  font-size: 2rem;
-  color: #ccc;
-  cursor: pointer;
-  position: relative;
-}
-
-.rating label:before {
-  content: "★";
-}
-
-.rating label.half:before {
-  content: "★";
-  position: absolute;
-  width: 50%;
-  overflow: hidden;
-}
-
-.rating input:checked ~ label,
-.rating label:hover,
-.rating label:hover ~ label {
-  color: #ffc107;
+.rating-stars-view {
+    --fill-percentage: 0%;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: 2px;
+    color: transparent;
+    background: linear-gradient(90deg, #ffc107 var(--fill-percentage), #6c757d var(--fill-percentage));
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 custom-card {

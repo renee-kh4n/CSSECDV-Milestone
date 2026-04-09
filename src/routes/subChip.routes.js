@@ -5,6 +5,7 @@ const postController = require('../controllers/postController');
 const validate = require('../middlewares/validate.middleware');
 const validateID = require('../middlewares/validateID.middleware');
 const { postSchema } = require('../validators/postSchemas');
+const { ratingSchema } = require('../validators/ratingSchemas');
 const { commentSchema } = require('../validators/commentSchemas');
 const { isLoggedin, isNotBanned} = require('../middlewares/auth.middleware');
 
@@ -32,6 +33,6 @@ router.post('/chip/:subChipID/:postId/edit/:id', isLoggedin, isNotBanned, valida
 router.post('/chip/:subChipID/:postId/delete/:id', isLoggedin, isNotBanned, validateID, postController.deleteComment);
 
 // Ratings
-router.post('/chip/:subChipID/rating/:id', isLoggedin, isNotBanned, validateID, postController.submitRating);
+router.post('/chip/:subChipID/rating/:id', isLoggedin, isNotBanned, validateID, validate(ratingSchema, (req) => `/chip/${req.params.subChipID}/rating/${req.params.id}`), postController.submitRating);
 
 module.exports = router;
