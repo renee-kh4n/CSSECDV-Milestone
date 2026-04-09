@@ -5,4 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			phoneInput.value = phoneInput.value.replace(/\D/g, '');
 		});
 	}
+
+	const ratingInputs = document.querySelectorAll(
+		'form[action^="/forum/rating/"] input[type="radio"][name="rating"]'
+	);
+	ratingInputs.forEach((input) => {
+		input.addEventListener('change', () => {
+			if (input.form) {
+				input.form.submit();
+			}
+		});
+	});
 });

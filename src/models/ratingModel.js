@@ -1,17 +1,30 @@
 const pool = require('../db');
 
 const upsertRating = async (postId, userId, rating) => {
-    const result = await pool.query(
+    const updated = await pool.query(
         `
-        INSERT INTO ratings (post_id, user_id, rating)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (post_id, user_id)
-        DO UPDATE SET rating = EXCLUDED.rating
+        UPDATE ratings
+        SET rating = $3
+        WHERE post_id = $1
+          AND user_id = $2
         RETURNING *
         `,
         [postId, userId, rating]
     );
-    return result.rows[0];
+
+    if (updated.rows[0]) {
+        return updated.rows[0];
+    }
+
+    const inserted = await pool.query(
+        `
+        INSERT INTO ratings (post_id, user_id, rating)
+        VALUES ($1, $2, $3)
+        RETURNING *
+        `,
+        [postId, userId, rating]
+    );
+    return inserted.rows[0];
 };
 
 const getRatingsForUserAndPosts = async (userId, postIds) => {

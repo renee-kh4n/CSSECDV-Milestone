@@ -39,6 +39,7 @@ exports.getAllPosts = async (req, res) => {
                 return {
                     ...post,
                     isOwner: userId && post.user_id === userId,
+                    userRating: ratingsByPostId[post.id] || null,
                     datetime: new Date(post.created_at).toLocaleString('en-US', {
                         weekday: 'short',
                         year: 'numeric',
@@ -56,7 +57,8 @@ exports.getAllPosts = async (req, res) => {
         return res.render('forum', { title: 'Forum', posts: updatedPosts });
     } catch (err) {
         console.error(err);
-        return res.send('Server error');
+        req.session.errorMessage = 'Unable to save rating right now.';
+        return res.redirect('/forum');
     }
 };
 
@@ -273,7 +275,8 @@ exports.submitRating = async (req, res) => {
         }
 
         await ratingModel.upsertRating(postId, userId, rating);
-            } catch (err) {
+        return res.redirect('/forum');
+    } catch (err) {
         console.error(err);
         return res.send('Server error');
     }

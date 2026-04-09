@@ -31,4 +31,7 @@ router.get('/forum/:postId/edit/:id', isLoggedin, isNotBanned, validateID, forum
 router.post('/forum/:postId/edit/:id', isLoggedin, isNotBanned, validateID, validate(commentSchema, (req) => `/forum/${req.params.postId}/edit/${req.params.id}`), forumController.updateComment);
 router.post('/forum/:postId/delete/:id', isLoggedin, isNotBanned, validateID, forumController.deleteComment);
 
+// Ratings
+router.post('/forum/rating/:id', isLoggedin, isNotBanned, validateID, forumController.submitRating);
+
 module.exports = router;
