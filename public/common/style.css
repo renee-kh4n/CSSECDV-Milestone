@@ -220,6 +220,22 @@ submit-btn:hover {
     margin: 10px 0 15px 0;
 }
 
+.profile{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 50px;
+}
+
+.pfp1 {
+    width: 20%;
+    height: auto;
+    border-radius: 50%;
+    border: 2px solid var(--neon-blue);
+    box-shadow: var(--glow);
+}
+
 .pfp {
     width: 42px;
     height: 42px;
@@ -342,4 +358,63 @@ custom-chip {
 
 .posts {
     height: 50px;
+}
+
+.profile-sections {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-section h4 {
+    margin-bottom: 10px;
+}
+
+.profile-post-card {
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(11, 15, 26, 0.5);
+}
+
+.profile-post-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.profile-chip-link {
+    color: var(--neon-blue);
+    text-decoration: none;
+}
+
+.profile-chip-link:hover {
+    color: var(--neon-pink);
+}
+
+.profile-post-price {
+    color: #3cd07f;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.profile-post-content {
+    margin-bottom: 8px;
+}
+
+.profile-rating-value {
+    margin-bottom: 8px;
+}
+
+.profile-view-link {
+    color: var(--neon-blue);
+    text-decoration: none;
+}
+
+.profile-view-link:hover {
+    color: var(--neon-pink);
 }

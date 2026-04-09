@@ -62,8 +62,32 @@ const getAverageRatingsForPosts = async (postIds) => {
     return result.rows;
 };
 
+const getRatedPostsByUserId = async (userId) => {
+    const result = await pool.query(
+        `
+        SELECT
+            ratings.post_id,
+            ratings.rating,
+            ratings.created_at AS rated_at,
+            posts.description,
+            posts.price,
+            posts.subchip_id,
+            subchips.title AS subchip_title
+        FROM ratings
+        JOIN posts ON ratings.post_id = posts.id
+        JOIN subchips ON posts.subchip_id = subchips.subchip_id
+        WHERE ratings.user_id = $1
+        ORDER BY ratings.created_at DESC
+        `,
+        [userId]
+    );
+
+    return result.rows;
+};
+
 module.exports = {
     upsertRating,
     getRatingsForUserAndPosts,
     getAverageRatingsForPosts,
+    getRatedPostsByUserId,
 };

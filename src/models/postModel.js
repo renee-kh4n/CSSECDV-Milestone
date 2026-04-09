@@ -38,6 +38,19 @@ const getAllPostsFromSubChip = async (subchip_id) => {
 	return result.rows;
 };
 
+const getPostsByUserId = async (userId) => {
+	const result = await pool.query(`
+		SELECT
+			posts.*,
+			subchips.title AS subchip_title
+		FROM posts
+		JOIN subchips ON posts.subchip_id = subchips.subchip_id
+		WHERE posts.user_id = $1
+		ORDER BY posts.created_at DESC
+	`, [userId]);
+	return result.rows;
+};
+
 const getPostByID = async (id) => {
 	const result = await pool.query('SELECT * FROM posts WHERE id = $1', [id]);
 	return result.rows[0];
@@ -81,6 +94,7 @@ module.exports = {
 	createPost,
 	getAllPosts,
 	getAllPostsFromSubChip,
+	getPostsByUserId,
 	getPostByID,
 	updatePost,
 	deletePost,

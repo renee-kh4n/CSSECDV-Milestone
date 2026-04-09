@@ -3,12 +3,55 @@
     {{#if errorMessage}}
     <p class="error-message">{{errorMessage}}</p>
     {{/if}}
-    <img src="{{user.pfp}}" class="pfp" crossorigin>
-    <div class="profile-info">
-        <p><strong>First Name:</strong> {{user.firstName}}</p>
-        <p><strong>Last Name:</strong> {{user.lastName}}</p>
-        <p><strong>Email:</strong> {{user.email}}</p>
-        <p><strong>Phone Number:</strong> +63{{user.phoneNumber}}</p>
-        <p><strong>Role:</strong> {{user.role}}</p>
+
+    <div class="profile">
+        <img src="{{user.pfp}}" class="pfp1" crossorigin>
+        <div class="profile-info">
+            <p><strong>First Name:</strong> {{user.firstName}}</p>
+            <p><strong>Last Name:</strong> {{user.lastName}}</p>
+            <p><strong>Email:</strong> {{user.email}}</p>
+            <p><strong>Phone Number:</strong> +63{{user.phoneNumber}}</p>
+            <p><strong>Role:</strong> {{user.role}}</p>
+        </div>
+    </div>
+
+    <div class="profile-sections scroll">
+        <section class="profile-section">
+            <h4>My Posts</h4>
+            {{#if myPosts.length}}
+                {{#each myPosts}}
+                <div class="profile-post-card">
+                    <div class="profile-post-head">
+                        <a href="/chip/{{this.subchip_id}}" class="profile-chip-link">{{this.subchip_title}}</a>
+                        <small>{{this.datetime}}</small>
+                    </div>
+                    <p class="profile-post-price">Php {{this.price}}</p>
+                    <p class="profile-post-content">{{this.description}}</p>
+                    <a href="/chip/{{this.subchip_id}}" class="profile-view-link">View in subchip</a>
+                </div>
+                {{/each}}
+            {{else}}
+                <p class="text-muted">You have no posts yet.</p>
+            {{/if}}
+        </section>
+
+        <section class="profile-section">
+            <h4>My Ratings</h4>
+            {{#if myRatings.length}}
+                {{#each myRatings}}
+                <div class="profile-post-card">
+                    <div class="profile-post-head">
+                        <a href="/chip/{{this.subchip_id}}" class="profile-chip-link">{{this.subchip_title}}</a>
+                        <small>{{this.datetime}}</small>
+                    </div>
+                    <p class="profile-post-content">{{this.description}}</p>
+                    <p class="profile-rating-value">Your rating: {{this.rating}}/5</p>
+                    <a href="/chip/{{this.subchip_id}}" class="profile-view-link">View post</a>
+                </div>
+                {{/each}}
+            {{else}}
+                <p class="text-muted">You have not rated any posts yet.</p>
+            {{/if}}
+        </section>
     </div>
 </div>
