@@ -12,7 +12,7 @@ const { isLoggedin, isAdmin, isNotBanned} = require('../middlewares/auth.middlew
 const router = express.Router();
 const upload = multer();
 
-router.get('/chip/:subChipID', isLoggedin, isAdmin, isNotBanned, validateID, postController.getAllPostsFromSubChip);
+router.get('/chip/:subChipID', isLoggedin, isNotBanned, validateID, postController.getAllPostsFromSubChip);
 
 // Create Post
 router.get('/chip/:subChipID/create', isLoggedin, isAdmin, isNotBanned, validateID, postController.showCreatePost);
