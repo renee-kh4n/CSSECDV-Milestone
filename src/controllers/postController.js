@@ -1,5 +1,7 @@
 const { date } = require('zod');
 const postModel = require('../models/postModel');
+const ratingModel = require('../models/ratingModel');
+const commentModel = require('../models/commentModel');
 const subChipModel = require('../models/subChipModel');
 const supabase = require('../supabase');
 
@@ -11,19 +13,68 @@ exports.getAllPosts = async (req, res) => {
 
         const subChip = await subChipModel.getSubChipByID(subchip_id);
 
-        const updatedPosts = posts.map(post => ({
-            ...post,
-            isOwner: userId && post.user_id === userId,
-            datetime: new Date(post.created_at).toLocaleString('en-US', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
+        let ratingsByPostId = {};
+        let averageRatingsByPostId = {};
+
+        if (posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const averageRatings = await ratingModel.getAverageRatingsForPosts(postIds);
+            averageRatingsByPostId = averageRatings.reduce((acc, row) => {
+                acc[row.post_id] = {
+                    averageRating: Number(row.average_rating),
+                    ratingCount: Number(row.rating_count)
+                };
+                return acc;
+            }, {});
+        }
+
+        if (userId && posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const ratings = await ratingModel.getRatingsForUserAndPosts(userId, postIds);
+            ratingsByPostId = ratings.reduce((acc, row) => {
+                acc[row.post_id] = row.rating;
+                return acc;
+            }, {});
+        }
+
+        const updatedPosts = await Promise.all(
+            posts.map(async (post) => {
+                const comments = await commentModel.getCommentsByPostId(post.id);
+
+                const updatedComments = comments.map(comment => ({
+                    ...comment,
+                    isOwner: userId && comment.user_id === userId,
+                    datetime: new Date(comment.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })
+                }));
+
+                return {
+                    ...post,
+                    isOwner: userId && post.user_id === userId,
+                    userRating: ratingsByPostId[post.id] || null,
+                    averageRating: averageRatingsByPostId[post.id]?.averageRating || null,
+                    ratingCount: averageRatingsByPostId[post.id]?.ratingCount || 0,
+                    datetime: new Date(post.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }),
+                    comments: updatedComments
+                };
             })
-        }));
+        );
+        
         return res.render(`subChip`, { title: subChip.title, subchip_id, posts: updatedPosts });
     } catch (err) {
         console.error(err);
@@ -39,19 +90,68 @@ exports.getAllPostsFromSubChip = async (req, res) => {
 
         const subChip = await subChipModel.getSubChipByID(subchip_id);
 
-        const updatedPosts = posts.map(post => ({
-            ...post,
-            isOwner: userId && post.user_id === userId,
-            datetime: new Date(post.created_at).toLocaleString('en-US', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
+        let ratingsByPostId = {};
+        let averageRatingsByPostId = {};
+        
+        if (posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const averageRatings = await ratingModel.getAverageRatingsForPosts(postIds);
+            averageRatingsByPostId = averageRatings.reduce((acc, row) => {
+                acc[row.post_id] = {
+                    averageRating: Number(row.average_rating),
+                    ratingCount: Number(row.rating_count)
+                };
+                return acc;
+            }, {});
+        }
+
+        if (userId && posts.length > 0) {
+            const postIds = posts.map((post) => post.id);
+            const ratings = await ratingModel.getRatingsForUserAndPosts(userId, postIds);
+            ratingsByPostId = ratings.reduce((acc, row) => {
+                acc[row.post_id] = row.rating;
+                return acc;
+            }, {});
+        }
+
+        const updatedPosts = await Promise.all(
+            posts.map(async (post) => {
+                const comments = await commentModel.getCommentsByPostId(post.id);
+
+                const updatedComments = comments.map(comment => ({
+                    ...comment,
+                    isOwner: userId && comment.user_id === userId,
+                    datetime: new Date(comment.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })
+                }));
+
+                return {
+                    ...post,
+                    isOwner: userId && post.user_id === userId,
+                    userRating: ratingsByPostId[post.id] || null,
+                    averageRating: averageRatingsByPostId[post.id]?.averageRating || null,
+                    ratingCount: averageRatingsByPostId[post.id]?.ratingCount || 0,
+                    datetime: new Date(post.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }),
+                    comments: updatedComments
+                };
             })
-        }));
+        );
+
         return res.render(`subChip`, { title: subChip.title, subchip_id, posts: updatedPosts });
     } catch (err) {
         console.error(err);
@@ -184,6 +284,103 @@ exports.deletePost = async (req, res) => {
         const deleted = await postModel.deletePost(postId, userId);
         if (!deleted) return res.status(403).send('Forbidden');
 
+        return res.redirect(`/chip/${subchip_id}`);
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.showCreateComment = async (req, res) => {
+    const subchip_id = req.params.subChipID;
+    try {
+        return res.render('editComment', { title: 'Add Comment', subchip_id, comment: {}, postId: req.params.postId });
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.showEditCommentForm = async (req, res) => {
+    const subchip_id = req.params.subChipID;
+    const commentId = req.params.id;
+    const userId = req.session.user.id;
+    try {
+        const comment = await commentModel.getCommentByID(commentId);
+        if (!comment) return res.status(404).send('Comment not found');
+        if (comment.user_id !== userId) return res.status(403).send('Forbidden');
+
+        return res.render('editComment', { title: 'Edit Comment', subchip_id, comment, postId: req.params.postId });
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.createComment = async (req, res) => {
+    const { content } = req.body;
+    const postId = req.params.postId;
+    const subchip_id = req.params.subChipID;
+    const userId = req.session.user.id;
+
+    try {
+        await commentModel.createComment(userId, postId, content);
+        return res.redirect(`/chip/${subchip_id}`);
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.updateComment = async (req, res) => {
+    const { content } = req.body;
+    const commentId = req.params.id;
+    const subchip_id = req.params.subChipID;
+    const userId = req.session.user.id;
+
+    try {
+        const updated = await commentModel.updateComment(commentId, userId, content);
+        if (!updated) return res.status(403).send('Forbidden');
+        return res.redirect(`/chip/${subchip_id}`);
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.deleteComment = async (req, res) => {
+    const commentId = req.params.id;
+    const subchip_id = req.params.subChipID;
+    const userId = req.session.user.id;
+
+    try {
+        const deleted = await commentModel.deleteComment(commentId, userId);
+        if (!deleted) return res.status(403).send('Forbidden');
+
+        return res.redirect(`/chip/${subchip_id}`);
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.submitRating = async (req, res) => {
+    const postId = Number(req.params.id);
+    const userId = req.session?.user?.id;
+    const rating = Number(req.body.rating);
+    const subchip_id = req.params.subChipID;
+
+    try {
+        if (!userId) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        if (!Number.isInteger(postId) || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+            req.session.errorMessage = 'Invalid rating value';
+            return res.redirect(`/chip/${subchip_id}`);
+        }
+
+        await ratingModel.upsertRating(postId, userId, rating);
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         console.error(err);

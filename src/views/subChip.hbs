@@ -73,8 +73,8 @@
                         <p class="mb-2 mt-2">{{this.content}}</p>
 
                         {{#if this.isOwner}}
-                        <a href="/forum/{{this.post_id}}/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="/forum/{{this.post_id}}/delete/{{this.id}}" method="POST" style="display:inline;">
+                        <a href="/chip/{{../../subchip_id}}/{{this.post_id}}/edit/{{this.id}}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="/chip/{{../../subchip_id}}/{{this.post_id}}/delete/{{this.id}}" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
                         {{/if}}
@@ -83,7 +83,7 @@
                 {{else}}
                     <p class="text-muted">No comments yet.</p>
                 {{/if}}
-                <a href="/forum/{{this.id}}/create" class="btn btn-primary btn-sm mt-2">
+                <a href="/chip/{{../subchip_id}}/{{this.id}}/create" class="btn btn-primary btn-sm mt-2">
                     Add Comment
                 </a>
             </div>
