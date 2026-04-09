@@ -9,4 +9,6 @@ router.get('/admin/ban-users', isLoggedin, isAdmin, adminController.showBanUsers
 router.post('/admin/ban-users/:id/ban', isLoggedin, isAdmin, adminController.banUser);
 router.post('/admin/ban-users/:id/unban', isLoggedin, isAdmin, adminController.unbanUser);
 
+router.get('/log', isLoggedin, isAdmin, adminController.downloadLog);
+
 module.exports = router;

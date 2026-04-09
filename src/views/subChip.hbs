@@ -50,9 +50,11 @@
                             class="rating-number-input"
                             required
                         >
-                        <button type="submit" name="ratingAction" value="save" class="btn btn-primary btn-sm">Submit</button>
                         {{#if this.userRating}}
+                            <button type="submit" name="ratingAction" value="edit" class="btn btn-primary btn-sm">Edit</button>
                             <button type="submit" name="ratingAction" value="clear" class="btn btn-danger btn-sm">Clear rating</button>
+                        {{else}}
+                            <button type="submit" name="ratingAction" value="save" class="btn btn-primary btn-sm">Submit</button>
                         {{/if}}
                         <span class="rating-stars-view" data-rating="{{this.userRating}}">★★★★★</span>
                     </div>

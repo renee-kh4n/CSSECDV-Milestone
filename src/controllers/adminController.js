@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const logger = require('../logger');
 
 exports.showAdminDashboard = async (req, res) => {
     try {
@@ -11,10 +12,19 @@ exports.showAdminDashboard = async (req, res) => {
             pfp: u.pfp || '',
             role: u.role
         }));
+        logger.info(
+            `ADMIN_DASHBOARD_VIEW | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.render('admin', { title: 'Admin Dashboard', users });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ADMIN_DASHBOARD_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -37,7 +47,9 @@ exports.showBanUsersPage = async (req, res) => {
             fullName: `${u.first_name} ${u.last_name}`,
             email: u.email
         }));
-
+        logger.info(
+            `BANNED_USERS_VIEW | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.render('adminBanUsers', {
             title: 'Ban Users',
             searchQuery,
@@ -45,8 +57,14 @@ exports.showBanUsersPage = async (req, res) => {
             bannedUsers
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `BANNED_USERS_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -54,19 +72,34 @@ exports.banUser = async (req, res) => {
     try {
         const userId = parseInt(req.params.id, 10);
         if (!Number.isInteger(userId)) {
+            logger.warn(
+                `BAN_USER_FAIL | admin=${req.session.user?.id} | reason=invalid_user | ip=${req.ip}`,
+            );
             req.session.errorMessage = 'Invalid user ID.';
             return res.redirect('/admin/ban-users');
         }
 
         const updatedUser = await userModel.setUserBanStatus(userId, true);
         if (!updatedUser) {
+            logger.warn(
+                `BAN_USER_FAIL | admin=${req.session.user?.id} | reason=failed_ban | ip=${req.ip} | userId=${req.params.id}`,
+            );
             req.session.errorMessage = 'Unable to ban this user.';
         }
 
+        logger.info(
+            `BAN_USER | admin=${req.session.user?.id} | ip=${req.ip} | userId=${req.params.id}`,
+        );
         return res.redirect('/admin/ban-users');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `BAN_USER_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | userId=${req.params.id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -74,18 +107,46 @@ exports.unbanUser = async (req, res) => {
     try {
         const userId = parseInt(req.params.id, 10);
         if (!Number.isInteger(userId)) {
+            logger.warn(
+                `BAN_USER_FAIL | admin=${req.session.user?.id} | reason=invalid_user | ip=${req.ip}`,
+            );
             req.session.errorMessage = 'Invalid user ID.';
             return res.redirect('/admin/ban-users');
         }
 
         const updatedUser = await userModel.setUserBanStatus(userId, false);
         if (!updatedUser) {
+            logger.warn(
+                `BAN_USER_FAIL | admin=${req.session.user?.id} | reason=failed_ban | ip=${req.ip} | userId=${req.params.id}`,
+            );
             req.session.errorMessage = 'Unable to unban this user.';
         }
 
+        logger.info(
+            `UNBAN_USER | admin=${req.session.user?.id} | ip=${req.ip} | userId=${req.params.id}`,
+        );
         return res.redirect('/admin/ban-users');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `UNBAN_USER_ERROR | admin=${req.session.user?.email} | ip=${req.ip} | error=${err.stack || err} | userId=${req.params.id}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
+
+exports.downloadLog = async (req, res) => {
+    const logPath = path.join(__dirname, '../../logs/app.log');
+
+    if (!fs.existsSync(logPath)) {
+        return res.render('error', {
+            title: 'Log file not found', message: 'Log file not found.',
+            noNavbar: true
+        });
+    }
+
+    return res.download(logPath, 'app.log');
+}

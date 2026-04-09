@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const postModel = require('../models/postModel');
 const ratingModel = require('../models/ratingModel');
+const logger = require('../logger');
 
 exports.showUserProfile = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ exports.showUserProfile = async (req, res) => {
         const myRatings = await ratingModel.getRatedPostsByUserId(userId);
 
         const phoneNumber = result.phone_number.replace(/^0+/, '');
-        
+
         const user = {
             firstName: result.first_name,
             lastName: result.last_name,
@@ -46,6 +47,10 @@ exports.showUserProfile = async (req, res) => {
             })
         }));
 
+        logger.info(
+            `PROFILE_VIEW | user=${req.session.user?.id} | ip=${req.ip}`,
+        );
+
         return res.render('profile', {
             title: 'User Profile',
             user,
@@ -53,7 +58,13 @@ exports.showUserProfile = async (req, res) => {
             myRatings: formattedMyRatings
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `PROFILE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };

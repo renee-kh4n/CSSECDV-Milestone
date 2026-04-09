@@ -1,9 +1,13 @@
 const userModel = require('../models/userModel');
+const logger = require('../logger');
 
 function isAdmin(req, res, next) {
     if (req.session.user.role === 'admin') {
         return next();
     } else {
+        logger.warn(
+            `USER_DENIED | route=${req.originalUrl} | user=${req.session.user?.id} | ip=${req.ip}`
+        );
         return res.redirect('/profile');
     }
 }
@@ -14,16 +18,25 @@ async function isNotBanned(req, res, next) {
             return res.redirect('/login');
         }
 
-        const user = await userModel.getUserById(req.session.user.id);
+        const user = await userModel.getUserById(req.session.user?.id);
         if (user?.is_banned) {
+            logger.warn(
+                `BANNED_USER_BLOCKED | userId=${req.session.user?.id} | ip=${req.ip}`
+            );
             req.session.errorMessage = 'You are banned from the forum.';
             return res.redirect('/profile');
         }
 
         return next();
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.warn(
+            `BANNED_USER_ERROR | userId=${req.session.user?.id} | ip=${req.ip}`
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 }
 
@@ -32,6 +45,7 @@ function isLoggedin(req, res, next) {
         res.set('Cache-Control', 'no-store');
         return next();
     } else {
+        logger.info(`UNAUTHENTICATED_ACCESS | route=${req.originalUrl} | ip=${req.ip}`);
         return res.redirect('/login');
     }
 }

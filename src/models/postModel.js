@@ -1,7 +1,6 @@
 const pool = require('../db');
 
 const createPost = async (userId, subchip_id, description, price, image) => {
-	console.log('Creating post with:', { userId, subchip_id, description, price, image });
 	const result = await pool.query(
 		'INSERT INTO posts (user_id, subchip_id, description, price, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
 		[userId, subchip_id, description, price, image]

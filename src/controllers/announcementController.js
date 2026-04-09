@@ -1,4 +1,5 @@
 const announcementModel = require('../models/announcementModel');
+const logger = require('../logger');
 
 exports.getAllAnnouncements = async (req, res) => {
     try {
@@ -18,26 +19,44 @@ exports.getAllAnnouncements = async (req, res) => {
             })
         }));
 
+        logger.info(
+            `ANNOUNCEMENTS_FETCH | user=${req.session.user?.id} | ip=${req.ip}`,
+        );
+
         return res.render('announcement', {
             title: 'Announcements',
             announcements: updatedAnnouncements,
             isAdmin
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | isAdmin=${isAdmin} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
 exports.showCreateAnnouncement = async (req, res) => {
     try {
+        logger.info(
+            `ANNOUNCEMENTS_CREATE_VIEW | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.render('editAnnouncement', {
-            title: 'Create Announcement',
-            announcement: {}
+            title: 'Create Announcement'
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_CREATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -48,16 +67,27 @@ exports.showEditAnnouncement = async (req, res) => {
         const announcement = await announcementModel.getAnnouncementByID(id);
 
         if (!announcement) {
-            return res.send('Announcement not found');
+            return res.render('error', {
+                title: 'Announcement not found', message: 'Announcement not found.'
+            });
         }
 
+        logger.info(
+            `ANNOUNCEMENTS_UPDATE_VIEW | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.render('editAnnouncement', {
             title: 'Edit Announcement',
             announcement
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_UPDATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -67,10 +97,20 @@ exports.createAnnouncement = async (req, res) => {
 
     try {
         await announcementModel.createAnnouncement(title, content, user_id);
+
+        logger.info(
+            `ANNOUNCEMENTS_CREATE | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.redirect('/announcement');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -81,10 +121,21 @@ exports.updateAnnouncement = async (req, res) => {
 
     try {
         await announcementModel.updateAnnouncement(id, title, content, user_id);
+
+        logger.info(
+            `ANNOUNCEMENTS_UPDATE | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
+
         return res.redirect('/announcement');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -93,9 +144,20 @@ exports.deleteAnnouncement = async (req, res) => {
 
     try {
         await announcementModel.deleteAnnouncement(id);
+
+        logger.info(
+            `ANNOUNCEMENTS_DELETE | admin=${req.session.user?.id} | ip=${req.ip}`,
+        );
+
         return res.redirect('/announcement');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `ANNOUNCEMENTS_DELETE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };

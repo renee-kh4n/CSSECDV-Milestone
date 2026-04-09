@@ -19,6 +19,9 @@ const loginLimiter = rateLimit({
             req.session.rateLimited = false;
             req.session.save();
         }, 15 * 60 * 1000);
+        logger.warn(
+            `LIMIT | ip=${req.ip}`,
+        );
         return res.redirect('/limit');
     }
 });

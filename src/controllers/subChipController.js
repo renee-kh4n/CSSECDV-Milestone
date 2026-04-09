@@ -1,5 +1,5 @@
 const subChipModel = require('../models/subChipModel');
-const postModel = require('../models/postModel');
+const logger = require('../logger');
 
 exports.getAllSubChips = async (req, res) => {
     try {
@@ -17,26 +17,43 @@ exports.getAllSubChips = async (req, res) => {
                 hour12: false
             })
         }));
-        return res.render('chip', { 
-            title: 'Chips', 
+        logger.info(
+            `SUBCHIPS_FETCH | user=${req.session.user?.id} | ip=${req.ip}`,
+        );
+        return res.render('chip', {
+            title: 'Chips',
             subChips: updatedsubChips,
             isAdmin
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `SUBCHIPS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
 exports.showCreateSubChipForm = async (req, res) => {
     try {
-        return res.render('editSubChip', { 
-            title: 'Create SubChip', 
-            subChip: {} 
+        logger.info(
+            `SUBCHIP_CREATE_VIEW | user=${req.session.user?.id} | ip=${req.ip}`,
+        );
+        return res.render('editSubChip', {
+            title: 'Create SubChip'
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `SUBCHIP_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -47,16 +64,26 @@ exports.showEditSubChipForm = async (req, res) => {
         const subChip = await subChipModel.getSubChipByID(id);
 
         if (!subChip) {
-            return res.send('SubChip not found');
+            return res.render('error', {
+                title: 'SubChip not found', message: 'SubChip not found.'
+            });
         }
-
-        return res.render('editSubChip', { 
-            title: 'Edit SubChip', 
-            subChip 
+        logger.info(
+            `SUBCHIP_UPDATE_VIEW | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id}`,
+        );
+        return res.render('editSubChip', {
+            title: 'Edit SubChip',
+            subChip
         });
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `SUBCHIP_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -66,15 +93,28 @@ exports.createSubChip = async (req, res) => {
     try {
         const subChipAlreadyExists = await subChipModel.subChipExists(title);
         if (subChipAlreadyExists) {
+            logger.warn(
+                `SUBCHIP_CREATE_FAIL | user=${req.session.user?.id} | reason=duplicate | ip=${req.ip}`,
+            );
             req.session.errorMessage = 'SubChip already exists';
             return res.redirect('/chip/create');
         }
 
         await subChipModel.createSubChip(title, description);
+        logger.info(
+            `SUBCHIP_CREATE | user=${req.session.user?.id} | ip=${req.ip}`,
+        );
         return res.redirect('/chip');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+
+        logger.info(
+            `SUBCHIP_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -85,15 +125,27 @@ exports.updateSubChip = async (req, res) => {
     try {
         const subChipAlreadyExists = await subChipModel.subChipExists(title);
         if (subChipAlreadyExists) {
+            logger.warn(
+                `SUBCHIP_UPDATE_FAIL | user=${req.session.user?.id} | reason=duplicate | ip=${req.ip} | subChipId=${id}`,
+            );
             req.session.errorMessage = 'SubChip already exists';
             return res.redirect('/chip/create');
         }
 
         await subChipModel.updateSubChip(id, title, description);
+        logger.info(
+            `SUBCHIP_UPDATE | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id}`,
+        );
         return res.redirect('/chip');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.error(
+            `SUBCHIP_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
 
@@ -102,10 +154,18 @@ exports.deleteSubChip = async (req, res) => {
 
     try {
         await subChipModel.deleteSubChip(id);
-
+        logger.info(
+            `SUBCHIP_DELETE | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id}`,
+        );
         return res.redirect('/chip');
     } catch (err) {
-        console.error(err);
-        return res.send('Server error');
+        logger.info(
+            `SUBCHIP_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
+        );
+        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        return res.render('error', {
+            title: 'Server Error', message: 'Server error.',
+            noNavbar: true
+        });
     }
 };
