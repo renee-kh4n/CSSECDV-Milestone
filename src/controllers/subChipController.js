@@ -1,4 +1,5 @@
 const subChipModel = require('../models/subChipModel');
+const postModel = require('../models/postModel');
 
 exports.getAllSubChips = async (req, res) => {
     try {
@@ -40,7 +41,7 @@ exports.showCreateSubChipForm = async (req, res) => {
 };
 
 exports.showEditSubChipForm = async (req, res) => {
-    const id = req.params.subChipid;
+    const id = req.params.subChipId;
 
     try {
         const subChip = await subChipModel.getSubChipByID(id);
@@ -79,7 +80,7 @@ exports.createSubChip = async (req, res) => {
 
 exports.updateSubChip = async (req, res) => {
     const { title, description } = req.body;
-    const id = req.params.subChipid;
+    const id = req.params.subChipId;
 
     try {
         const subChipAlreadyExists = await subChipModel.subChipExists(title);
@@ -97,10 +98,12 @@ exports.updateSubChip = async (req, res) => {
 };
 
 exports.deleteSubChip = async (req, res) => {
-    const id = req.params.subChipid;
+    const id = req.params.subChipId;
 
     try {
+        await postModel.deletePostsBySubChip(id);
         await subChipModel.deleteSubChip(id);
+
         return res.redirect('/chip');
     } catch (err) {
         console.error(err);

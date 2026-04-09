@@ -13,8 +13,8 @@ router.get('/chip', isLoggedin, subChipController.getAllSubChips);
 router.get('/chip/create', isLoggedin, isAdmin, subChipController.showCreateSubChipForm);
 router.post('/chip/create', isLoggedin, isAdmin, validate(subChipSchema, '/chip/create'), subChipController.createSubChip);
 
-router.get('/chip/edit/:subChipid', isLoggedin, isAdmin, validateID, subChipController.showEditSubChipForm);
-router.post('/chip/edit/:subChipid', isLoggedin, isAdmin, validateID, validate(subChipSchema, (req) => `/chip/edit/${req.params.id}`), subChipController.updateSubChip);
-router.post('/chip/delete/:subChipid', isLoggedin, isAdmin, validateID, subChipController.deleteSubChip);
+router.get('/chip/edit/:subChipId', isLoggedin, isAdmin, validateID, subChipController.showEditSubChipForm);
+router.post('/chip/edit/:subChipId', isLoggedin, isAdmin, validateID, validate(subChipSchema, (req) => `/chip/edit/${req.params.id}`), subChipController.updateSubChip);
+router.post('/chip/delete/:subChipId', isLoggedin, isAdmin, validateID, subChipController.deleteSubChip);
 
 module.exports = router;

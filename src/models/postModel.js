@@ -77,6 +77,14 @@ const deletePost = async (id, userId) => {
 	return result.rows[0];
 };
 
+const deletePostsBySubChip = async (subchip_id) => {
+    const result = await pool.query(
+        'DELETE FROM posts WHERE subchip_id = $1 RETURNING *',
+        [subchip_id]
+    );
+    return result.rows;
+};
+
 module.exports = {
 	createPost,
 	getAllPosts,
@@ -84,4 +92,5 @@ module.exports = {
 	getPostByID,
 	updatePost,
 	deletePost,
+	deletePostsBySubChip,
 };
