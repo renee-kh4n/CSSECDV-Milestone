@@ -10,6 +10,8 @@ const { isGuest } = require('../middlewares/auth.middleware');
 const router = express.Router();
 const upload = multer();
 
+const logger = require('../logger');
+
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 4,               
