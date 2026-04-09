@@ -1,5 +1,8 @@
 <div class="container">
     <h2>Profile</h2>
+    {{#if errorMessage}}
+    <p class="error-message">{{errorMessage}}</p>
+    {{/if}}
     <img src="{{user.pfp}}" class="pfp" crossorigin>
     <div class="profile-info">
         <p><strong>First Name:</strong> {{user.firstName}}</p>

@@ -1,0 +1,57 @@
+<div class="container">
+    <h2>Ban Users From Forum</h2>
+
+    {{#if errorMessage}}
+    <p class="error-message">{{errorMessage}}</p>
+    {{/if}}
+
+    <form action="/admin/ban-users" method="GET" class="ban-search">
+        <input type="text" name="search" placeholder="Search users by name or email" value="{{searchQuery}}">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="scroll">
+        <ul class="ban-user-list">
+            {{#each users}}
+            <li class="ban-user-item">
+                <div>
+                    <strong>{{this.fullName}}</strong>
+                    <p>{{this.email}} ({{this.role}})</p>
+                </div>
+                {{#if (eq this.role "admin")}}
+                <button type="button" class="ban-btn disabled-btn" disabled>Cannot Ban Admin</button>
+                {{else}}
+                {{#if this.isBanned}}
+                <form action="/admin/ban-users/{{this.id}}/unban" method="POST">
+                    <button type="submit" class="ban-btn">unban user</button>
+                </form>
+                {{else}}
+                <form action="/admin/ban-users/{{this.id}}/ban" method="POST">
+                    <button type="submit" class="ban-btn">ban user</button>
+                </form>
+                {{/if}}
+                {{/if}}
+            </li>
+            {{else}}
+            <li class="ban-empty">No users found.</li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <h3 class="ban-subtitle">Banned Users</h3>
+    <ul class="ban-user-list">
+        {{#each bannedUsers}}
+        <li class="ban-user-item">
+            <div>
+                <strong>{{this.fullName}}</strong>
+                <p>{{this.email}}</p>
+            </div>
+            <form action="/admin/ban-users/{{this.id}}/unban" method="POST">
+                <button type="submit" class="ban-btn">unban user</button>
+            </form>
+        </li>
+        {{else}}
+        <li class="ban-empty">No banned users.</li>
+        {{/each}}
+    </ul>
+</div>

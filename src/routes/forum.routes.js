@@ -5,18 +5,18 @@ const postController = require('../controllers/postController');
 const validate = require('../middlewares/validate.middleware');
 const validateID = require('../middlewares/validateID.middleware');
 const { postSchema } = require('../validators/postSchemas');
-const { isLoggedin } = require('../middlewares/auth.middleware');
+const { isLoggedin, isNotBanned } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 const upload = multer();
 
-router.get('/forum', isLoggedin, postController.getAllPosts);
+router.get('/forum', isLoggedin, isNotBanned, postController.getAllPosts);
 
-router.get('/forum/create', isLoggedin, postController.showCreatePost);
-router.post('/forum/create', isLoggedin, upload.single('image'), validate(postSchema, '/forum/create'), postController.createPost);
+router.get('/forum/create', isLoggedin, isNotBanned, postController.showCreatePost);
+router.post('/forum/create', isLoggedin, isNotBanned, upload.single('image'), validate(postSchema, '/forum/create'), postController.createPost);
 
-router.get('/forum/edit/:id', isLoggedin, validateID, postController.showEditPostForm);
-router.post('/forum/edit/:id', isLoggedin, validateID, upload.single('image'), validate(postSchema, (req) => `/forum/edit/${req.params.id}`), postController.updatePost);
-router.post('/forum/delete/:id', isLoggedin, validateID, postController.deletePost);
+router.get('/forum/edit/:id', isLoggedin, isNotBanned, validateID, postController.showEditPostForm);
+router.post('/forum/edit/:id', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, (req) => `/forum/edit/${req.params.id}`), postController.updatePost);
+router.post('/forum/delete/:id', isLoggedin, isNotBanned, validateID, postController.deletePost);
 
 module.exports = router;
