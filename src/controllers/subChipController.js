@@ -101,7 +101,6 @@ exports.deleteSubChip = async (req, res) => {
     const id = req.params.subChipId;
 
     try {
-        await postModel.deletePostsBySubChip(id);
         await subChipModel.deleteSubChip(id);
 
         return res.redirect('/chip');
