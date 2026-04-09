@@ -370,11 +370,6 @@ exports.submitRating = async (req, res) => {
     const rating = Number(req.body.rating);
     const subchip_id = req.params.subChipID;
 
-
-    console.log(postId);
-    console.log(userId)
-    console.log(rating)
-
     try {
         if (!userId) {
             return res.status(401).send('Unauthorized');
