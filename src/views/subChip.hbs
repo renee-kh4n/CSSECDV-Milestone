@@ -38,7 +38,7 @@
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
                 {{else}}
-                <form method="POST" action="/forum/rating/{{this.id}}">
+                <form method="POST" action="/chip/{{../subchip_id}}/rating/{{this.id}}">
                 <div class="rating">
                     <input type="radio" name="rating" value="5" id="star5-{{this.id}}" {{#if (eq this.userRating 5)}}checked{{/if}}><label for="star5-{{this.id}}" title="5 stars"></label>
 

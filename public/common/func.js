@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const ratingInputs = document.querySelectorAll(
-		'form[action^="/forum/rating/"] input[type="radio"][name="rating"]'
+		'form[action*="/rating/"] input[type="radio"][name="rating"]'
 	);
 	ratingInputs.forEach((input) => {
 		input.addEventListener('change', () => {
