@@ -216,6 +216,10 @@ submit-btn:hover {
     background: rgba(255, 47, 220, 0.08);
 }
 
+.admin-actions {
+    margin: 10px 0 15px 0;
+}
+
 .pfp {
     width: 42px;
     height: 42px;
@@ -257,3 +261,48 @@ submit-btn:hover {
     flex: 1;
 }
 
+.ban-search {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 20px 0;
+}
+
+.ban-user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ban-user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0, 246, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.ban-user-item p {
+    margin: 3px 0 0 0;
+}
+
+.ban-btn {
+    width: auto !important;
+    text-transform: lowercase;
+}
+
+.ban-empty {
+    border: 1px dashed rgba(0, 246, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.ban-subtitle {
+    margin-top: 20px;
+}
+
+.disabled-btn {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

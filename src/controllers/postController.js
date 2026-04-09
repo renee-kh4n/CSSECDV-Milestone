@@ -1,12 +1,11 @@
 const { date } = require('zod');
 const postModel = require('../models/postModel');
-const subChipModel = require('../models/subChipModel');
+const supabase = require('../supabase');
 
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await postModel.getAllPosts();
         const userId = req.session?.user?.id;
-        const subChip = req.params.subChip;
 
         const updatedPosts = posts.map(post => ({
             ...post,
@@ -21,7 +20,7 @@ exports.getAllPosts = async (req, res) => {
                 hour12: false
             })
         }));
-        return res.render(`subChip`, { title: subChip, posts: updatedPosts });
+        return res.render('forum', { title: 'Forum', posts: updatedPosts });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -29,9 +28,8 @@ exports.getAllPosts = async (req, res) => {
 };
 
 exports.showCreatePost = async (req, res) => {
-    const subChipTitle = req.params.subChip;
-    try {         
-        return res.render('editPost', { title: 'Create Post', subChipTitle, post: {} });
+    try {
+        return res.render('editPost', { title: 'Create Post', post: {} });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -40,13 +38,14 @@ exports.showCreatePost = async (req, res) => {
 
 exports.showEditPostForm = async (req, res) => {
     const postId = req.params.id;
-    const subChipTitle = req.params.subChip;
+    const userId = req.session.user.id;
+
     try {
         const post = await postModel.getPostByID(postId);
-        if (!post) {
-            return res.send('Post not found');
-        }
-        return res.render('editPost', { title: 'Edit Post', subChipTitle, post });
+        if (!post) return res.status(404).send('Post not found');
+        if (post.user_id !== userId) return res.status(403).send('Forbidden');
+
+        return res.render('editPost', { title: 'Edit Post', post });
     } catch (err) {
         console.error(err);
         return res.send('Server error');
@@ -54,10 +53,41 @@ exports.showEditPostForm = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-    const { content } = req.body;
+    const { description, price } = req.body;
     const userId = req.session.user.id;
+
     try {
-        await postModel.createPost(userId, content);
+        let imageUrl = null;
+
+        if (req.file) {
+            const { fileTypeFromBuffer } = await import('file-type');
+            const type = await fileTypeFromBuffer(req.file.buffer);
+
+            if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
+                req.session.errorMessage = 'Invalid file type. Only JPG and PNG are allowed.';
+                return res.redirect('/forum/create');
+            }
+
+            const fileName = `${Date.now()}-${Math.random()}.${type.ext}`;
+
+            const { error } = await supabase.storage
+                .from('posts')
+                .upload(fileName, req.file.buffer, { contentType: type.mime });
+
+            if (error) {
+                console.error('Supabase upload error:', error);
+                req.session.errorMessage = 'Image upload failed';
+                return res.redirect('/forum/create');
+            }
+
+            const { data: publicUrlData } = supabase.storage
+                .from('posts')
+                .getPublicUrl(fileName);
+
+            imageUrl = publicUrlData.publicUrl;
+        }
+
+        await postModel.createPost(userId, description, price, imageUrl);
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);
@@ -66,11 +96,43 @@ exports.createPost = async (req, res) => {
 };
 
 exports.updatePost = async (req, res) => {
-    const { content } = req.body;
+    const { description, price } = req.body;
     const postId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
-        await postModel.updatePost(postId, content);
+        let imageUrl = null;
+
+        if (req.file) {
+            const { fileTypeFromBuffer } = await import('file-type');
+            const type = await fileTypeFromBuffer(req.file.buffer);
+
+            if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
+                req.session.errorMessage = 'Invalid file type. Only JPG and PNG are allowed.';
+                return res.redirect(`/forum/edit/${postId}`);
+            }
+
+            const fileName = `${Date.now()}-${crypto.randomUUID()}.${type.ext}`;
+
+            const { error } = await supabase.storage
+                .from('posts')
+                .upload(fileName, req.file.buffer, { contentType: type.mime });
+
+            if (error) {
+                console.error('Supabase upload error:', error);
+                req.session.errorMessage = 'Image upload failed';
+                return res.redirect(`/forum/edit/${postId}`);
+            }
+
+            const { data: publicUrlData } = supabase.storage
+                .from('posts')
+                .getPublicUrl(fileName);
+
+            imageUrl = publicUrlData.publicUrl;
+        }
+
+        const updated = await postModel.updatePost(postId, userId, description, price, imageUrl);
+        if (!updated) return res.status(403).send('Forbidden');
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);
@@ -80,9 +142,12 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
     const postId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
-        await postModel.deletePost(postId);
+        const deleted = await postModel.deletePost(postId, userId);
+        if (!deleted) return res.status(403).send('Forbidden');
+
         return res.redirect('/forum');
     } catch (err) {
         console.error(err);

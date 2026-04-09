@@ -1,17 +1,33 @@
 <div class='container'>
     <h2>{{#if post.id}}Edit Post{{else}}Create Post{{/if}}</h2>
-    <form action="/chip/{{subChipTitle}}/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST">
-        <div>
-            <label for="content">Content</label>
-            <textarea name="content" rows="4" required>{{post.content}}</textarea>
+    <form action="/forum/{{#if post.id}}edit/{{post.id}}{{else}}create{{/if}}" method="POST" enctype="multipart/form-data">
+        {{#if post.image}}
+        <div class="mb-2">
+            <p>Current Image</p>
+            <img src="{{post.image}}" class="posts" alt="Post image" crossorigin>
+        </div>
+        {{/if}}
+        <div class="form-input">
+            <label>Image</label>
+            <input type="file" name="image" id="image" accept="image/jpeg, image/png" {{#unless post.image}}required{{/unless}}>
         </div>
         <br>
+        <div>
+            <label for="price">Price</label>
+            <input type="number" name="price" step="0.01" required value="{{post.price}}">
+        </div>
+        <br>
+        <div>
+            <label for="description">Description</label>
+            <textarea name="description" rows="4" required>{{post.description}}</textarea>
+        </div>
+
         <div class="text-center">
             <button type="submit" class='btn btn-primary'>{{#if post.id}}Update Post{{else}}Create Post{{/if}}</button>
         </div>
     </form>
     {{#if post.id}}
-    <form action="/chip/{{subChipTitle}}/delete/{{post.id}}" method="POST">
+    <form action="/forum/delete/{{post.id}}" method="POST">
         <div class="text-center mt-3">
             <button type="submit" class="btn btn-danger">Delete Post</button>
         </div>
