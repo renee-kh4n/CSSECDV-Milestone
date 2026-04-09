@@ -1,6 +1,6 @@
-const { date } = require('zod');
 const postModel = require('../models/postModel');
 const ratingModel = require('../models/ratingModel');
+const commentModel = require('../models/commentModel');
 const supabase = require('../supabase');
 
 exports.getAllPosts = async (req, res) => {
@@ -18,20 +18,41 @@ exports.getAllPosts = async (req, res) => {
             }, {});
         }
 
-        const updatedPosts = posts.map(post => ({
-            ...post,
-            isOwner: userId && post.user_id === userId,
-            userRating: ratingsByPostId[post.id] || null,
-            datetime: new Date(post.created_at).toLocaleString('en-US', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
+        const updatedPosts = await Promise.all(
+            posts.map(async (post) => {
+                const comments = await commentModel.getCommentsByPostId(post.id);
+
+                const updatedComments = comments.map(comment => ({
+                    ...comment,
+                    isOwner: userId && comment.user_id === userId,
+                    datetime: new Date(comment.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })
+                }));
+
+                return {
+                    ...post,
+                    isOwner: userId && post.user_id === userId,
+                    datetime: new Date(post.created_at).toLocaleString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }),
+                    comments: updatedComments
+                };
             })
-        }));
+        );
+
         return res.render('forum', { title: 'Forum', posts: updatedPosts });
     } catch (err) {
         console.error(err);
@@ -167,6 +188,75 @@ exports.deletePost = async (req, res) => {
     }
 };
 
+
+exports.showCreateComment = async (req, res) => {
+    try {
+        return res.render('editComment', { title: 'Add Comment', comment: {}, postId: req.params.postId });
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.showEditCommentForm = async (req, res) => {
+    const commentId = req.params.id;
+    const userId = req.session.user.id;
+    try {
+        const comment = await commentModel.getCommentByID(commentId);
+        if (!comment) return res.status(404).send('Comment not found');
+        if (comment.user_id !== userId) return res.status(403).send('Forbidden');
+
+        return res.render('editComment', { title: 'Edit Comment', comment, postId: req.params.postId });
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.createComment = async (req, res) => {
+    const { content } = req.body;
+    const postId = req.params.postId;
+    const userId = req.session.user.id;
+
+    try {
+        await commentModel.createComment(userId, postId, content);
+        return res.redirect('/forum');
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.updateComment = async (req, res) => {
+    const { content } = req.body;
+    const commentId = req.params.id;
+    const userId = req.session.user.id;
+
+    try {
+        const updated = await commentModel.updateComment(commentId, userId, content);
+        if (!updated) return res.status(403).send('Forbidden');
+        return res.redirect('/forum');
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
+exports.deleteComment = async (req, res) => {
+    const commentId = req.params.id;
+    const userId = req.session.user.id;
+
+    try {
+        const deleted = await commentModel.deleteComment(commentId, userId);
+        if (!deleted) return res.status(403).send('Forbidden');
+
+        return res.redirect('/forum');
+    } catch (err) {
+        console.error(err);
+        return res.send('Server error');
+    }
+};
+
 exports.submitRating = async (req, res) => {
     const postId = Number(req.params.id);
     const userId = req.session?.user?.id;
@@ -183,8 +273,7 @@ exports.submitRating = async (req, res) => {
         }
 
         await ratingModel.upsertRating(postId, userId, rating);
-        return res.redirect('/forum');
-    } catch (err) {
+            } catch (err) {
         console.error(err);
         return res.send('Server error');
     }
