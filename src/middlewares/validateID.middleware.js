@@ -1,3 +1,5 @@
+const logger = require('../logger');
+
 function validateID(req, res, next) {
   for (const key in req.params) {
     const rawValue = req.params[key];
