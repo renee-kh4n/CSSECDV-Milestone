@@ -6,9 +6,10 @@ const supabase = require('../supabase');
 
 const logger = require('../logger');
 
+const multer = require('multer');
 
 exports.showLoginPage = (req, res) => {
-    logger.info(`LOGIN_VIEW | user=${req.session.user?.id} | ip=${req.ip}`);
+    logger.info(`LOGIN_VIEW | ip=${req.ip}`);
     if (req.query.timeout === '1') {
         req.session.errorMessage = 'Session expired due to inactivity.';
     }
@@ -60,9 +61,12 @@ exports.registerUser = async (req, res) => {
 
         if (error) {
             logger.error(
-                `REGISTER_ERROR | email=${email} | ip=${req.ip} | error=${error.stack || error}`,
+                `REGISTER_ERROR | email=${email} | ip=${req.ip} | error=${error}`,
             );
-            req.session.errorMessage = 'Server error';
+            const isDev = process.env.NODE_ENV === 'development';
+            req.session.errorMessage = isDev
+                ? (error?.stack || error?.message || String(error))
+                : 'Server error.';
             return res.redirect('/register');
         }
 
@@ -77,9 +81,12 @@ exports.registerUser = async (req, res) => {
         return res.redirect('/login');
     } catch (err) {
         logger.error(
-            `REGISTER_ERROR | email=${req?.data?.email} | ip=${req.ip} | error=${error.stack || error}`,
+            `REGISTER_ERROR | email=${req?.data?.email} | ip=${req.ip} | error=${err}`,
         );
-        req.session.errorMessage = 'Server error';
+        const isDev = process.env.NODE_ENV === 'development';
+        req.session.errorMessage = isDev
+            ? (error?.stack || error?.message || String(error))
+            : 'Server error.';
         return res.redirect('/register');
     }
 };
@@ -105,9 +112,12 @@ exports.loginUser = async (req, res) => {
             req.session.regenerate((err) => {
                 if (err) {
                     logger.error(
-                        `SESSION_REGENERATE_ERROR | email=${email} | ip=${req.ip} | error=${err.stack || err}`,
+                        `SESSION_REGENERATE_ERROR | email=${email} | ip=${req.ip} | error=${err}`,
                     );
-                    req.session.errorMessage = 'Server error';
+                    const isDev = process.env.NODE_ENV === 'development';
+                    req.session.errorMessage = isDev
+                        ? (error?.stack || error?.message || String(error))
+                        : 'Server error.';
                     return res.redirect('/login');
                 }
 
@@ -135,9 +145,12 @@ exports.loginUser = async (req, res) => {
         }
     } catch (err) {
         logger.error(
-            `LOGIN_ERROR | id=${req?.session?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `LOGIN_ERROR | id=${req?.session?.id} | ip=${req.ip} | error=${err}`,
         );
-        req.session.errorMessage = 'Server error';
+        const isDev = process.env.NODE_ENV === 'development';
+        req.session.errorMessage = isDev
+            ? (error?.stack || error?.message || String(error))
+            : 'Server error.';
         return res.redirect('/login');
     }
 };
@@ -148,4 +161,20 @@ exports.logoutUser = (req, res) => {
         res.clearCookie('id');
         return res.redirect('/login');
     });
+};
+
+exports.handleRegisterUploadError = (err, req, res, next) => {
+    if (!err) return next();
+
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            req.session.errorMessage = 'File too large. Max size is 1MB.';
+            return res.redirect('/register');
+        }
+
+        req.session.errorMessage = err.message;
+        return res.redirect('/register');
+    }
+
+    return next(err);
 };

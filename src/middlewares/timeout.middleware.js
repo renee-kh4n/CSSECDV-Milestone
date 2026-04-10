@@ -8,12 +8,14 @@ function sessionTimeout(req, res, next) {
 	const last = req.session.lastActivity;
 
 	if (last && now - last > IDLE_TIMEOUT_MS) {
+		const userId = req.session.user?.id;
+		const ip = req.ip;
+		
 		return req.session.destroy((err) => {
 			if (err) {
 				logger.error(
-					`TIMEOUT | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+					`TIMEOUT | user=${userId} | ip=${ip} | error=${err}`,
 				);
-				console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
 				return next(err);
 			} else {
 				return res.redirect('/login?timeout=1');

@@ -32,9 +32,10 @@ async function isNotBanned(req, res, next) {
         logger.warn(
             `BANNED_USER_ERROR | userId=${req.session.user?.id} | ip=${req.ip}`
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }

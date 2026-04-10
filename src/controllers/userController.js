@@ -59,11 +59,12 @@ exports.showUserProfile = async (req, res) => {
         });
     } catch (err) {
         logger.error(
-            `PROFILE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `PROFILE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }

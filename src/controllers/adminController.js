@@ -20,11 +20,12 @@ exports.showAdminDashboard = async (req, res) => {
         return res.render('admin', { title: 'Admin Dashboard', users });
     } catch (err) {
         logger.error(
-            `ADMIN_DASHBOARD_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `ADMIN_DASHBOARD_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -59,12 +60,13 @@ exports.showBanUsersPage = async (req, res) => {
             bannedUsers
         });
     } catch (err) {
-        logger.info(
-            `BANNED_USERS_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        logger.error(
+            `BANNED_USERS_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -94,12 +96,13 @@ exports.banUser = async (req, res) => {
         );
         return res.redirect('/admin/ban-users');
     } catch (err) {
-        logger.info(
-            `BAN_USER_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | userId=${req.params.id} | error=${err.stack || err}`,
+        logger.error(
+            `BAN_USER_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | userId=${req.params.id} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -130,11 +133,12 @@ exports.unbanUser = async (req, res) => {
         return res.redirect('/admin/ban-users');
     } catch (err) {
         logger.error(
-            `UNBAN_USER_ERROR | admin=${req.session.user?.email} | ip=${req.ip} | error=${err.stack || err} | userId=${req.params.id}`,
+            `UNBAN_USER_ERROR | admin=${req.session.user?.email} | ip=${req.ip} | error=${err} | userId=${req.params.id}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }

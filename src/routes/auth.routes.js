@@ -8,7 +8,11 @@ const { registerSchema, loginSchema } = require('../validators/authSchemas');
 const { isGuest } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
-const upload = multer();
+const upload = multer({
+    limits: {
+        fileSize: 1 * 1024 * 1024, // 1MB
+    },
+});
 
 const logger = require('../logger');
 
@@ -29,7 +33,7 @@ const loginLimiter = rateLimit({
 });
 
 router.get('/register', isGuest, authController.showRegisterPage);
-router.post('/register', upload.single('pfp'), validate(registerSchema, '/register'), authController.registerUser);
+router.post('/register', upload.single('pfp'), authController.handleRegisterUploadError, validate(registerSchema, '/register'), authController.registerUser);
 
 router.get('/login', isGuest, authController.showLoginPage);
 router.post('/login', loginLimiter, validate(loginSchema, '/login'), authController.loginUser);

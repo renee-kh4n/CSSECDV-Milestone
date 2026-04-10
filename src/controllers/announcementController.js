@@ -30,11 +30,12 @@ exports.getAllAnnouncements = async (req, res) => {
         });
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | isAdmin=${isAdmin} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | isAdmin=${isAdmin} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -50,11 +51,12 @@ exports.showCreateAnnouncement = async (req, res) => {
         });
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_CREATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_CREATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -81,11 +83,12 @@ exports.showEditAnnouncement = async (req, res) => {
         });
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_UPDATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_UPDATE_VIEW_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -104,11 +107,12 @@ exports.createAnnouncement = async (req, res) => {
         return res.redirect('/announcement');
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -129,11 +133,12 @@ exports.updateAnnouncement = async (req, res) => {
         return res.redirect('/announcement');
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -152,11 +157,12 @@ exports.deleteAnnouncement = async (req, res) => {
         return res.redirect('/announcement');
     } catch (err) {
         logger.error(
-            `ANNOUNCEMENTS_DELETE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err.stack || err}`,
+            `ANNOUNCEMENTS_DELETE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | announcementId=${id} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }

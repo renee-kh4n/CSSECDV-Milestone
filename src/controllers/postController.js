@@ -1,10 +1,10 @@
-const { date } = require('zod');
 const postModel = require('../models/postModel');
 const ratingModel = require('../models/ratingModel');
 const commentModel = require('../models/commentModel');
 const subChipModel = require('../models/subChipModel');
 const supabase = require('../supabase');
 const logger = require('../logger');
+const multer = require('multer');
 
 exports.getAllPosts = async (req, res) => {
     try {
@@ -84,11 +84,12 @@ exports.getAllPosts = async (req, res) => {
         return res.render(`subChip`, { title: subChip.title, subchip_id, posts: updatedPosts });
     } catch (err) {
         logger.info(
-            `POSTS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `POSTS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -170,11 +171,12 @@ exports.getAllPostsFromSubChip = async (req, res) => {
         return res.render(`subChip`, { title: subChip.title, subchip_id, posts: updatedPosts });
     } catch (err) {
         logger.info(
-            `POSTS_SUBCHIP_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `POSTS_SUBCHIP_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -189,11 +191,12 @@ exports.showCreatePost = async (req, res) => {
         return res.render('editPost', { title: 'Create Post', subchip_id });
     } catch (err) {
         logger.error(
-            `POSTS_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `POSTS_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -206,20 +209,26 @@ exports.showEditPostForm = async (req, res) => {
 
     try {
         const post = await postModel.getPostByID(postId);
-        if (!post) return res.status(404).send('Post not found');
-        if (post.user_id !== userId) return res.status(403).send('Forbidden');
+        if (!post) return res.render('error', {
+            title: 'Post not found',
+            message: 'Post not found.'
+        });
+        if (post.user_id !== userId) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
 
         logger.info(
             `POSTS_UPDATE_VIEW | user=${req.session.user?.id} | ip=${req.ip}`,
         );
         return res.render('editPost', { title: 'Edit Post', subchip_id, post });
     } catch (err) {
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
         logger.info(
-            `POSTS_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err.stack || err}`,
+            `POSTS_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err}`,
         );
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -255,7 +264,6 @@ exports.createPost = async (req, res) => {
                 logger.warn(
                     `POST_CREATE_FAIL | user=${req.session.user?.id} | reason=database_file_upload | ip=${req.ip} | error = ${error}`,
                 );
-                console.error((process.env.DEBUG === 'true' ? error?.stack : error?.message) ?? err ?? 'Unknown error');
                 req.session.errorMessage = 'Image upload failed';
                 return res.redirect(`/chip/${subchip_id}/create`);
             }
@@ -273,11 +281,12 @@ exports.createPost = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.error(
-            `POSTS_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `POSTS_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -314,7 +323,6 @@ exports.updatePost = async (req, res) => {
                 logger.warn(
                     `POST_UPDATE_FAIL | user=${req.session.user?.id} | reason=database_file_upload | ip=${req.ip}`,
                 );
-                console.error((process.env.DEBUG === 'true' ? error?.stack : error?.message) ?? err ?? 'Unknown error');
                 req.session.errorMessage = 'Image upload failed';
                 return res.redirect(`/chip/${subchip_id}/edit/${postId}`);
             }
@@ -327,18 +335,21 @@ exports.updatePost = async (req, res) => {
         }
 
         const updated = await postModel.updatePost(postId, userId, description, price, imageUrl);
-        if (!updated) return res.status(403).send('Forbidden');
+        if (!updated) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
         logger.info(
             `POSTS_UPDATE | user=${req.session.user?.id} | ip=${req.ip}`,
         );
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.error(
-            `POSTS_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err.stack || err}`,
+            `POSTS_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -351,7 +362,9 @@ exports.deletePost = async (req, res) => {
 
     try {
         const deleted = await postModel.deletePost(postId, userId);
-        if (!deleted) return res.status(403).send('Forbidden');
+        if (!deleted) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
 
         logger.info(
             `POSTS_DELETE | user=${req.session.user?.id} | ip=${req.ip}`,
@@ -360,11 +373,12 @@ exports.deletePost = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.error(
-            `POSTS_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err.stack || err}`,
+            `POSTS_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -379,11 +393,12 @@ exports.showCreateComment = async (req, res) => {
         return res.render('editComment', { title: 'Add Comment', subchip_id, comment: {}, postId: req.params.postId });
     } catch (err) {
         logger.info(
-            `COMMENT_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `COMMENT_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
             title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -396,7 +411,9 @@ exports.showEditCommentForm = async (req, res) => {
     try {
         const comment = await commentModel.getCommentByID(commentId);
         if (!comment) return res.status(404).send('Comment not found');
-        if (comment.user_id !== userId) return res.status(403).send('Forbidden');
+        if (comment.user_id !== userId) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
 
         logger.info(
             `COMMENT_UPDATE_VIEW | user=${req.session.user?.id} | ip=${req.ip}`,
@@ -405,11 +422,12 @@ exports.showEditCommentForm = async (req, res) => {
         return res.render('editComment', { title: 'Edit Comment', subchip_id, comment, postId: req.params.postId });
     } catch (err) {
         logger.info(
-            `COMMENT_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err.stack || err}`,
+            `COMMENT_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -431,11 +449,12 @@ exports.createComment = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.info(
-            `COMMENT_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+            `COMMENT_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
             title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -449,7 +468,9 @@ exports.updateComment = async (req, res) => {
 
     try {
         const updated = await commentModel.updateComment(commentId, userId, content);
-        if (!updated) return res.status(403).send('Forbidden');
+        if (!updated) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
 
         logger.info(
             `COMMENT_UDPATE | user=${req.session.user?.id} | ip=${req.ip}`,
@@ -458,11 +479,12 @@ exports.updateComment = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.info(
-            `COMMENT_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err.stack || err}`,
+            `COMMENT_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -475,7 +497,9 @@ exports.deleteComment = async (req, res) => {
 
     try {
         const deleted = await commentModel.deleteComment(commentId, userId);
-        if (!deleted) return res.status(403).send('Forbidden');
+        if (!deleted) return res.render('error', {
+            title: 'Forbidden', message: 'Forbidden'
+        });
 
         logger.info(
             `COMMENT_DELETE | user=${req.session.user?.id} | ip=${req.ip}`,
@@ -484,7 +508,7 @@ exports.deleteComment = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.info(
-            `COMMENT_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err.stack || err}`,
+            `COMMENT_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | commentId=${commentId} | error=${err}`,
         );
         return res.render('error', {
             title: 'Server Error', message: 'Server error.',
@@ -519,7 +543,7 @@ exports.submitRating = async (req, res) => {
             logger.info(
                 `RATING_CRUD | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | action=${ratingAction}`,
             );
-            
+
             return res.redirect(`/chip/${subchip_id}`);
         }
 
@@ -540,12 +564,33 @@ exports.submitRating = async (req, res) => {
         return res.redirect(`/chip/${subchip_id}`);
     } catch (err) {
         logger.info(
-            `RATING_CRUD_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | action=${ratingAction} | error=${err.stack || err} `,
+            `RATING_CRUD_ERROR | user=${req.session.user?.id} | ip=${req.ip} | postId=${postId} | action=${ratingAction} | error=${err} `,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
+};
+
+exports.handlePostUploadError = (err, req, res, next) => {
+    if (!err) return next();
+
+    const redirectPath = req.params.id
+        ? `/chip/${req.params.subChipID}/edit/${req.params.id}`
+        : `/chip/${req.params.subChipID}/create`;
+
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            req.session.errorMessage = 'File too large. Max size is 1MB.';
+            return res.redirect(redirectPath);
+        }
+
+        req.session.errorMessage = err.message;
+        return res.redirect(redirectPath);
+    }
+
+    return next(err);
 };

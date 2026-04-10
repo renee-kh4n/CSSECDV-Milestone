@@ -7,9 +7,11 @@ function validateID(req, res, next) {
       logger.warn(
         `INVALID_ROUTE_PARAM | key=${key} | value=${rawValue} | route=${req.originalUrl} | ip=${req.ip}`
       );
+      const isDev = process.env.NODE_ENV === 'development';
       return res.render('error', {
         title: 'Invalid input',
-        message: `Invalid input`
+        message: isDev ? `Invalid ${key}` : `Invalid input`,
+        noNavbar: true
       });
     }
 

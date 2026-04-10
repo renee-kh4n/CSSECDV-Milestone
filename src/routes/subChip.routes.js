@@ -10,17 +10,21 @@ const { commentSchema } = require('../validators/commentSchemas');
 const { isLoggedin, isNotBanned} = require('../middlewares/auth.middleware');
 
 const router = express.Router();
-const upload = multer();
+const upload = multer({
+    limits: {
+        fileSize: 1 * 1024 * 1024, // 1MB
+    },
+});
 
 router.get('/chip/:subChipID', isLoggedin, validateID, postController.getAllPostsFromSubChip);
 
 // Create Post
 router.get('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, postController.showCreatePost);
-router.post('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, (req) => `/chip/${req.params.subChipID}/create`), postController.createPost);
+router.post('/chip/:subChipID/create', isLoggedin, isNotBanned, validateID, upload.single('image'), postController.handlePostUploadError, validate(postSchema, (req) => `/chip/${req.params.subChipID}/create`), postController.createPost);
 
 // Edit & Delete Post
 router.get('/chip/:subChipID/edit/:id', isLoggedin, isNotBanned, validateID, postController.showEditPostForm);
-router.post('/chip/:subChipID/edit/:id', isLoggedin, isNotBanned, validateID, upload.single('image'), validate(postSchema, (req) => `/chip/${req.params.subChipID}/edit/${req.params.id}`), postController.updatePost);
+router.post('/chip/:subChipID/edit/:id', isLoggedin, isNotBanned, validateID, upload.single('image'), postController.handlePostUploadError, validate(postSchema, (req) => `/chip/${req.params.subChipID}/edit/${req.params.id}`), postController.updatePost);
 router.post('/chip/:subChipID/delete/:id', isLoggedin, isNotBanned, validateID, postController.deletePost);
 
 // Create Comment

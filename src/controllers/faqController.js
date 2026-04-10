@@ -10,12 +10,13 @@ exports.getAllFAQs = async (req, res) => {
         );
         return res.render('faq', { title: 'FAQs', faqs, isAdmin });
     } catch (err) {
-        logger.info(
-            `FAQ_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -26,15 +27,16 @@ exports.showCreateFAQForm = async (req, res) => {
         logger.info(
             `FAQ_CREATE | admin=${req.session.user?.id} | ip=${req.ip}`,
         );
-        return res.render('editFaq', { title: 'Create FAQ'});
+        return res.render('editFaq', { title: 'Create FAQ' });
     } catch (err) {
 
-        logger.info(
-            `FAQ_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -56,12 +58,13 @@ exports.showEditFAQForm = async (req, res) => {
         );
         return res.render('editFaq', { title: 'Edit FAQ', faq });
     } catch (err) {
-        logger.info(
-            `FAQ_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip}| faqId=${faqId} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip}| faqId=${faqId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -78,13 +81,13 @@ exports.createFAQ = async (req, res) => {
         );
         return res.redirect('/faq');
     } catch (err) {
-
-        logger.info(
-            `FAQ_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_CREATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -102,13 +105,13 @@ exports.updateFAQ = async (req, res) => {
         );
         return res.redirect('/faq');
     } catch (err) {
-
-        logger.info(
-            `FAQ_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | faqId=${faqId} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_UPDATE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | faqId=${faqId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -124,13 +127,13 @@ exports.deleteFAQ = async (req, res) => {
         );
         return res.redirect('/faq');
     } catch (err) {
-
-        logger.info(
-            `FAQ_DELETE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | faqId=${faqId} | error=${err.stack || err}`,
+        logger.error(
+            `FAQ_DELETE_ERROR | admin=${req.session.user?.id} | ip=${req.ip} | faqId=${faqId} | error=${err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }

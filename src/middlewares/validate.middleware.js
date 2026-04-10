@@ -6,7 +6,10 @@ const validate = (schema, route) => (req, res, next) => {
 		logger.error(
 			`VALIDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${result.error}`,
 		);
-		req.session.errorMessage = result.error.issues[0].message;
+		const isDev = process.env.NODE_ENV === 'development';
+		req.session.errorMessage = isDev
+			? result.error.issues[0].message
+			: 'Invalid input.';
 		const path = typeof route === 'function' ? route(req) : route;
 		return res.redirect(path);
 	}

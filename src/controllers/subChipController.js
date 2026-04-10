@@ -29,9 +29,10 @@ exports.getAllSubChips = async (req, res) => {
         logger.info(
             `SUBCHIPS_FETCH_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -49,9 +50,10 @@ exports.showCreateSubChipForm = async (req, res) => {
         logger.info(
             `SUBCHIP_CREATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -79,9 +81,10 @@ exports.showEditSubChipForm = async (req, res) => {
         logger.info(
             `SUBCHIP_UPDATE_VIEW_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -110,9 +113,10 @@ exports.createSubChip = async (req, res) => {
         logger.info(
             `SUBCHIP_CREATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -141,9 +145,10 @@ exports.updateSubChip = async (req, res) => {
         logger.error(
             `SUBCHIP_UPDATE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
@@ -162,9 +167,10 @@ exports.deleteSubChip = async (req, res) => {
         logger.info(
             `SUBCHIP_DELETE_ERROR | user=${req.session.user?.id} | ip=${req.ip} | subChipId=${id} | error=${err.stack || err}`,
         );
-        console.error((process.env.DEBUG === 'true' ? err?.stack : err?.message) ?? err ?? 'Unknown error');
+        const isDev = process.env.NODE_ENV === 'development';
         return res.render('error', {
-            title: 'Server Error', message: 'Server error.',
+            title: 'Server Error',
+            message: isDev ? (err?.stack || String(err)) : 'Server error.',
             noNavbar: true
         });
     }
